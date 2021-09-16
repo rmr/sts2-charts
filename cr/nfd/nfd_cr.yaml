@@ -12,15 +12,14 @@ spec:
   workerConfig:
     configData: |
       sources:
+        pci:
+          deviceLabelFields: [class, vendor, device, subsystem_vendor, subsystem_device]
         custom:
-        - name: "my.pci.feature"
+        - name: "silicom.pci.devices"
           matchOn:
             - pciId :
                 vendor: ["1c2c"]
                 device: ["1000"]
-            - usbId:
-                vendor: ["1546"]
-                device: ["01a9"]
             - pciId :
                 vendor: ["1c2c"]
                 device: ["1001"]
@@ -30,11 +29,9 @@ spec:
             - pciId :
                 vendor: ["8086"]
                 device: ["1591"]
-            - pciId :
-                vendor: ["8086"]
-                device: ["1591"]
                 subsystem_vendor: ["1374"]
                 subsystem_device: ["02d8"]
-            - pciId :
-                vendor: ["1c2c"]
-                device: ["0000"]
+        - name: "ublox.usb.serial"
+            - usbId:
+                vendor: ["1546"]
+                device: ["01a9"]
