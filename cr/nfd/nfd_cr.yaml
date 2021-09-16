@@ -13,7 +13,7 @@ spec:
     configData: |
       sources:
         pci:
-          deviceLabelFields: [class, vendor, device, subsystem_vendor, subsystem_device]
+          deviceClassWhitelist: ["0200", "1200"]
         custom:
         - name: "silicom.pci.devices"
           matchOn:
@@ -32,6 +32,7 @@ spec:
                 subsystem_vendor: ["1374"]
                 subsystem_device: ["02d8"]
         - name: "ublox.usb.serial"
+          matchOn:
             - usbId:
                 vendor: ["1546"]
                 device: ["01a9"]
