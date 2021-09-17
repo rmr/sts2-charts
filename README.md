@@ -5,11 +5,13 @@ This is a repository of the helm charts needed to use the STS2 card from Silicom
 ## Notes
     * Installed to sts-silicom namespace.
     * Special Resource Operator version 4.9 is used.
-    *
+
 
 ## Prerequisites
 
 ### SRO
+
+Within the cr/sro directory, there is a file `setup.sh`. This is used to create and tear down the SRO for 4.9.
 
 ### NFD configuration
 This CR will configure NFD to label the nodes with the STS2 (feature.node.kubernetes.io/usb-ff_1374_0001.present)
