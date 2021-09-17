@@ -1,3 +1,4 @@
+# https://raw.githubusercontent.com/kubernetes-sigs/node-feature-discovery/v0.7.0/nfd-worker-daemonset.yaml.template
 apiVersion: nfd.openshift.io/v1
 kind: NodeFeatureDiscovery
 metadata:
