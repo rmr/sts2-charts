@@ -37,7 +37,7 @@ if ! $(oc describe configs.imageregistry.operator.openshift.io cluster | grep "M
     echo "Registry not enabled."
     oc patch config.imageregistry.operator.openshift.io/cluster --type=merge -p '{"spec":{"rolloutStrategy":"Recreate","replicas":1}}'
     oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
-    oc patch config cluster -n openshift-image-registry --type merge --patch '{"spec": { "managementState": "Managed"}}'
+    oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed"}}'
 fi
 
 if $(oc get apiservice -A | grep -q v1beta1.sro.openshift.io) ; then
