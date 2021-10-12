@@ -33,14 +33,14 @@ oc label nodes worker2 specialresource.openshift.io/state-sts-silicom-3000-
     # oc delete crd specialresources.sro.openshift.io
 #fi
 
-if ! $(oc describe configs.imageregistry.operator.openshift.io cluster | grep "Management State:  Managed") ; then
+if ! $(oc describe configs.imageregistry.operator.openshift.io cluster | grep "Management State: | grep -q Managed") ; then
     echo "Registry not enabled."
     oc patch config.imageregistry.operator.openshift.io/cluster --type=merge -p '{"spec":{"rolloutStrategy":"Recreate","replicas":1}}'
     oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
     oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed"}}'
 fi
 
-if $(oc get apiservice -A | grep -q v1beta1.sro.openshift.io) ; then
+if $(oc get apiservice -A | grep -q sro.openshift.io) ; then
     oc delete apiservice v1beta1.sro.openshift.io
 fi
 
@@ -53,7 +53,7 @@ oc rollout restart deploy -n openshift-image-registry
 
 sleep 2
 
-operator-sdk run bundle quay.io/ryan_raasch/special-resource-operator-bundle:4.9.0 --timeout 600s --verbose -n $sro_ns
+operator-sdk run bundle quay.io/silicom/special-resource-operator-bundle:4.9.0 --timeout 600s --verbose -n $sro_ns
 
 sleep 15
 
