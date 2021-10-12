@@ -143,6 +143,9 @@ spec:
             mountPath: /bin/entrypoint.sh
             readOnly: true
             subPath: entrypoint.sh
+          - name: modules
+            mountPath: /lib/modules
+            readOnly: true
       volumes:
         - name: devfs
           hostPath:
@@ -150,6 +153,9 @@ spec:
         - name: sysfs
           hostPath:
             path: /sys
+        - name: modules
+          hostPath:
+            path: /lib/modules
         - name: entrypoint
           configMap:
             defaultMode: 0700
