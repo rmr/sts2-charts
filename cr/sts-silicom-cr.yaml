@@ -12,12 +12,11 @@ spec:
       name: sts-silicom
       url: cm://sts-silicom/sts-silicom
   nodeSelector:
-    feature.node.kubernetes.io/usb-ff_1374_0001.present:
+    feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d8.present:
   set:
     kind: Values
     apiVersion: sro.openshift.io/v1beta1
-    imageRepo: quay.io/ryan_raasch
-    siltsyncImage: siltsync:1.1.6.4
+    operatorImage: quay.io/silicom/sts-operator:0.0.1
     driverRegistry: image-registry.openshift-image-registry.svc:5000/sts-silicom
     runArgs:
       platform: openshift-container-platform
