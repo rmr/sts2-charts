@@ -25,15 +25,11 @@ oc label nodes worker2 specialresource.openshift.io/state-sts-silicom-0000-
 oc label nodes worker2 specialresource.openshift.io/state-sts-silicom-1000-
 oc label nodes worker2 specialresource.openshift.io/state-sts-silicom-3000-
 
-# oc delete buildconfigs.build.openshift.io -n $ns --all
-# oc delete imagetags.image.openshift.io -n $ns --all
-# oc delete imagestreams.image.openshift.io -n $ns  --all
-# oc delete daemonset  -n $ns --all
-#if $(oc get crd -A | grep -q specialresources.sro.openshift.io) ; then
-    # oc delete crd specialresources.sro.openshift.io
-#fi
+if $(oc get crd -A | grep -q specialresources.sro.openshift.io) ; then
+    oc delete crd specialresources.sro.openshift.io
+fi
 
-if ! $(oc describe configs.imageregistry.operator.openshift.io cluster | grep "Management State: | grep -q Managed") ; then
+if ! $(oc describe configs.imageregistry.operator.openshift.io cluster | grep "Management State:" | grep -q Managed) ; then
     echo "Registry not enabled."
     oc patch config.imageregistry.operator.openshift.io/cluster --type=merge -p '{"spec":{"rolloutStrategy":"Recreate","replicas":1}}'
     oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
