@@ -21,9 +21,11 @@ if $(oc get ns -A | grep -q driver-container-base) ; then
     oc delete ns driver-container-base
 fi
 
-oc label nodes worker2 specialresource.openshift.io/state-sts-silicom-0000-
-oc label nodes worker2 specialresource.openshift.io/state-sts-silicom-1000-
-oc label nodes worker2 specialresource.openshift.io/state-sts-silicom-3000-
+if $(oc get nodes | grep -q worker2); then
+    for label in $(oc describe nodes worker2 | grep specialresource.openshift.io); do
+        oc label nodes worker2 "$(echo $label | cut -d '=' -f 1)-"
+    done
+fi
 
 if ! $(oc describe configs.imageregistry.operator.openshift.io cluster | grep "Management State:" | grep -q Managed) ; then
     echo "Registry not enabled."
@@ -52,3 +54,5 @@ sleep 15
 oc apply -f $base/cr/nfd/nfd_cr.yaml
 
 make -C $base/../.. oc-sts-silicom-configmap
+
+oc delete pod --field-selector=status.phase==Succeeded --all-namespaces
