@@ -1,25 +1,17 @@
 apiVersion: sts.silicom.com/v1alpha1
 kind: StsConfig
 metadata:
-  name: master
-  namespace: sts-silicom
+  name: gm-1
 spec:
-  name: master
-  image: quay.io/silicom/siltsync:1.2.0.1
-  podAnnotation:
-    sts.silicom.com/mode-2: "asdf"
+  name: gm-1
   nodeSelector:
-    sts.silicom.com/mode-2: "saf"
+    mode.sts.silicom.com/gm-1: ""
+  mode: gm
+  namespace: gm-1
   interfaces:
-    - slot: 0
-      function: 5
-      up: true
-      mode: 2
+    - ethName: enp2s0f0
       synce: true
       holdoff: 500
-    - slot: 0
-      function: 0
-      up: true
-      mode: 2
+    - ethName: enp2s0f1
       synce: true
       holdoff: 500
