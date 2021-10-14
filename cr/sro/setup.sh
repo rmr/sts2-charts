@@ -56,3 +56,4 @@ oc apply -f $base/cr/nfd/nfd_cr.yaml
 make -C $base/../.. oc-sts-silicom-configmap
 
 oc delete pod --field-selector=status.phase==Succeeded --all-namespaces
+oc delete pod --field-selector=status.phase==Failed --all-namespaces

@@ -1,0 +1,132 @@
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  namespace: {{.Values.specialresource.spec.namespace}}
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  namespace: {{.Values.specialresource.spec.namespace}}
+rules:
+- apiGroups:
+  - security.openshift.io
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - privileged
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  namespace: {{.Values.specialresource.spec.namespace}}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+subjects:
+- kind: ServiceAccount
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  namespace: {{.Values.specialresource.spec.namespace}}
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+subjects:
+- kind: ServiceAccount
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  namespace: {{.Values.specialresource.spec.namespace}}
+roleRef:
+  kind: ClusterRole
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  namespace: {{.Values.specialresource.spec.namespace}}
+  annotations:
+    openshift.io/scc: silicom-sts
+    specialresource.openshift.io/state: "device-feature-discovery"
+    specialresource.openshift.io/wait: "true"
+spec:
+  selector:
+    matchLabels:
+      app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+  template:
+    metadata:
+      # Mark this pod as a critical add-on; when enabled, the critical add-on scheduler
+      # reserves resources for critical add-on pods so that they can be rescheduled after
+      # a failure.  This annotation works in tandem with the toleration below.
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ""
+      labels:
+        app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+    spec:
+      nodeSelector:
+        feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d8.present: "true"
+      serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - image: quay.io/silicom/sts-discovery:0.0.1
+        imagePullPolicy: Always
+        name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}-ctr
+        env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        args:
+        - --zap-log-level=10
+        volumeMounts:
+          - name: devfs
+            mountPath: /dev
+          - name: sysfs
+            mountPath: /sys
+        securityContext:
+          privileged: true
+          readOnlyRootFilesystem: false
+          seLinuxOptions:
+            level: "s0"
+      volumes:
+        - name: devfs
+          hostPath:
+            path: /dev
+        - name: sysfs
+          hostPath:
+            path: /sys

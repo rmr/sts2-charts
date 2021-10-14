@@ -1,0 +1,25 @@
+apiVersion: sts.silicom.com/v1alpha1
+kind: StsConfig
+metadata:
+  name: master
+  namespace: sts-silicom
+spec:
+  name: master
+  image: quay.io/silicom/siltsync:1.2.0.1
+  podAnnotation:
+    sts.silicom.com/mode-2: "asdf"
+  nodeSelector:
+    sts.silicom.com/mode-2: "saf"
+  interfaces:
+    - slot: 0
+      function: 5
+      up: true
+      mode: 2
+      synce: true
+      holdoff: 500
+    - slot: 0
+      function: 0
+      up: true
+      mode: 2
+      synce: true
+      holdoff: 500
