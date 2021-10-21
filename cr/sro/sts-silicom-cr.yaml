@@ -1,0 +1,30 @@
+apiVersion: sro.openshift.io/v1beta1
+kind: SpecialResource
+metadata:
+  name: sts-silicom
+  namespace: sro
+spec:
+  namespace: sts-silicom
+  chart:
+    name: sts-silicom
+    version: 0.0.1
+    repository:
+      name: sts-silicom
+      url: cm://sts-silicom/sts-silicom
+  nodeSelector:
+    feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d8.present:
+  set:
+    kind: Values
+    apiVersion: sro.openshift.io/v1beta1
+    operatorImage: quay.io/silicom/sts-operator:0.0.1
+    driverRegistry: image-registry.openshift-image-registry.svc:5000/sts-silicom
+    runArgs:
+      platform: openshift-container-platform
+    buildArgs:
+    - name: ICE_VERSION
+      value: 1.6.4
+    - name: ICE_SRC_CURL
+      value: https://sourceforge.net/projects/e1000/files/ice%20stable/1.6.4/ice-1.6.4.tar.gz/download
+    # oc adm release info 4.8.6 --image-for=driver-toolkit
+    - name: BUILD_IMG_BASE
+      value: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:66f251d88e03c11660ace80eb3e6af3baf29ab8f4ff22aed5435438dd061fd6e
