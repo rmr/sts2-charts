@@ -25,5 +25,5 @@ oc-sts-silicom-configmap: sts-silicom-configmap
 	- oc delete cm sts-silicom -n sts-silicom
 	- oc create namespace sts-silicom
 	oc create cm sts-silicom --from-file=charts/cm/index.yaml --from-file=charts/cm/sts-silicom-0.0.1.tgz -n sts-silicom
-	- oc delete -f cr/sts/sts-silicom-cr.yaml
-	oc apply -f cr/sts/sts-silicom-cr.yaml
+	- oc delete -f cr/sro/sts-silicom-cr.yaml
+	oc apply -f cr/sro/sts-silicom-cr.yaml

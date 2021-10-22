@@ -2,6 +2,7 @@ apiVersion: sts.silicom.com/v1alpha1
 kind: StsConfig
 metadata:
   name: gm-1
+  namespace: gm-1
 spec:
   name: gm-1
   nodeSelector:
