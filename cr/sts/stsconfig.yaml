@@ -2,13 +2,13 @@ apiVersion: sts.silicom.com/v1alpha1
 kind: StsConfig
 metadata:
   name: gm-1
-  namespace: gm-1
+  namespace: sts-silicom
 spec:
   name: gm-1
   nodeSelector:
     mode.sts.silicom.com/gm-1: ""
   mode: gm
-  namespace: gm-1
+  namespace: sts-silicom
   interfaces:
     - ethName: enp2s0f0
       synce: true
