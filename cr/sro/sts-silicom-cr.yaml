@@ -5,6 +5,7 @@ metadata:
   namespace: sro
 spec:
   namespace: sts-silicom
+  # debug: true
   chart:
     name: sts-silicom
     version: 0.0.1
@@ -16,8 +17,10 @@ spec:
   set:
     kind: Values
     apiVersion: sro.openshift.io/v1beta1
-    operatorImage: quay.io/silicom/sts-operator:0.0.1
+    imageRegistry: quay.io/silicom
+    operatorImage: sts-operator:0.0.1
     driverRegistry: image-registry.openshift-image-registry.svc:5000/sts-silicom
+    logLevel: 10
     runArgs:
       platform: openshift-container-platform
     buildArgs:

@@ -229,8 +229,8 @@ spec:
     spec:
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}
       containers:
-      - image: {{.Values.operatorImage}}
+      - image: {{.Values.imageRegistry}}/sts-operator:0.0.1
         imagePullPolicy: Always
         name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-ctr
         args:
-        - --zap-log-level=10
+        - --zap-log-level={{.Values.logLevel}}
