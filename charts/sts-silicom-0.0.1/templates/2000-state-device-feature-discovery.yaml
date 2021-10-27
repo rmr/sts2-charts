@@ -98,10 +98,11 @@ spec:
         app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
     spec:
       nodeSelector:
-        feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d8.present: "true"
+{{ range $k, $v := .Spec.NodeSelector }}
+        {{ $k }}:{{ $v }}
+{{ end }}
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
       containers:
       - image: quay.io/silicom/sts-discovery:0.0.1
         imagePullPolicy: Always
@@ -113,20 +114,3 @@ spec:
                 fieldPath: spec.nodeName
         args:
         - --zap-log-level=10
-        volumeMounts:
-          - name: devfs
-            mountPath: /dev
-          - name: sysfs
-            mountPath: /sys
-        securityContext:
-          privileged: true
-          readOnlyRootFilesystem: false
-          seLinuxOptions:
-            level: "s0"
-      volumes:
-        - name: devfs
-          hostPath:
-            path: /dev
-        - name: sysfs
-          hostPath:
-            path: /sys

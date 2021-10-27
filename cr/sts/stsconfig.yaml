@@ -8,7 +8,6 @@ spec:
   nodeSelector:
     mode.sts.silicom.com/gm-1: ""
   mode: gm
-  namespace: sts-silicom
   interfaces:
     - ethName: enp2s0f0
       synce: true

@@ -1,11 +1,14 @@
 ---
+
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   labels:
     app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
   name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
+
 ---
+
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
@@ -26,8 +29,7 @@ spec:
     - type: "ImageChange"
   source:
     dockerfile: |
-      ARG BUILD_IMG_BASE
-      FROM $BUILD_IMG_BASE
+      FROM {{.Values.driverToolkitImage}}
       MAINTAINER "rmr@silicom.dk"
 
       ARG ICE_SRC_CURL
@@ -54,4 +56,3 @@ spec:
     to:
       kind: DockerImage
       name: "{{.Values.driverRegistry}}/{{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}:v{{.Values.kernelFullVersion}}"
----
