@@ -22,6 +22,14 @@ rules:
   - get
   - list
   - update
+- apiGroups:
+  - security.openshift.io
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - privileged
 
 ---
 
@@ -105,6 +113,8 @@ spec:
       - image: {{.Values.imageRegistry}}/sts-discovery:0.0.1
         imagePullPolicy: Always
         name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}-ctr
+        securityContext:
+          privileged: true
         env:
           - name: NODE_NAME
             valueFrom:

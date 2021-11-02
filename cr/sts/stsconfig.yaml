@@ -5,6 +5,8 @@ metadata:
   namespace: sts-silicom
 spec:
   name: gm-1
+  namespace: sts-silicom
+  imageRegistry: "quay.io/silicom"
   nodeSelector:
     mode.sts.silicom.com/gm-1: ""
   mode: gm
