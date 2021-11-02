@@ -38,6 +38,10 @@ if $(oc get apiservice -A | grep -q sro.openshift.io) ; then
     oc delete apiservice v1beta1.sro.openshift.io
 fi
 
+if $(oc get customresourcedefinitions.apiextensions.k8s.io | grep -q stsconfigs.sts.silicom.com); then
+    oc delete customresourcedefinition stsconfigs.sts.silicom.com
+fi
+
 sleep 10
 
 oc create ns $sro_ns

@@ -4,16 +4,20 @@ metadata:
   name: gm-1
   namespace: sts-silicom
 spec:
-  name: gm-1
   namespace: sts-silicom
   imageRegistry: quay.io/silicom
   nodeSelector:
-    mode.sts.silicom.com/gm-1: ""
-  mode: gm
+    mode.sts.silicom.com/gm-1: "true"
+  stsVersion: 2.0.0.0
+  mode: GrandMaster
   interfaces:
     - ethName: enp2s0f0
-      synce: true
+      synce: 1
       holdoff: 500
+      mode: GrandMaster
+      ethPort: 0
     - ethName: enp2s0f1
-      synce: true
+      synce: 1
       holdoff: 500
+      mode: GrandMaster
+      ethPort: 1

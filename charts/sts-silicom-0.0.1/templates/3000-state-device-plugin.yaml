@@ -36,40 +36,133 @@ spec:
           spec:
             description: StsConfigSpec defines the desired state of StsConfig
             properties:
+              domainNumber:
+                default: 24
+                maximum: 48
+                minimum: 24
+                type: integer
+              imageRegistry:
+                default: quay.io/silicom
+                type: string
               interfaces:
                 items:
                   properties:
                     ethName:
                       type: string
+                    ethPort:
+                      type: integer
                     holdoff:
+                      default: 500
+                      maximum: 1800
+                      minimum: 300
+                      type: integer
+                    mode:
+                      default: GrandMaster
+                      enum:
+                      - GrandMaster
+                      - BoundaryClock
+                      - Slave
+                      type: string
+                    qlEnable:
+                      default: 0
+                      maximum: 1
+                      minimum: 0
                       type: integer
                     synce:
-                      type: boolean
+                      default: 0
+                      maximum: 1
+                      minimum: 0
+                      type: integer
                   required:
                   - ethName
-                  - holdoff
-                  - synce
+                  - ethPort
                   type: object
                 type: array
               mode:
-                type: string
-              name:
-                pattern: '[a-z0-9\.\-]+'
+                default: GrandMaster
+                enum:
+                - GrandMaster
+                - BoundaryClock
+                - Slave
                 type: string
               namespace:
+                default: sts-silicom
                 type: string
               nodeSelector:
                 additionalProperties:
                   type: string
                 type: object
+              phyLedsCtl:
+                default: 0
+                maximum: 1
+                minimum: 0
+                type: integer
+              src10MHz:
+                default: 1
+                maximum: 3
+                minimum: 1
+                type: integer
+              srcPPS:
+                default: 1
+                maximum: 3
+                minimum: 1
+                type: integer
+              stsVersion:
+                default: 2.0.0.1
+                type: string
+              synceCpu:
+                default: 10
+                maximum: 40
+                minimum: 1
+                type: integer
+              synceOption:
+                default: 1
+                maximum: 2
+                minimum: 1
+                type: integer
+              synceRecClkPort:
+                default: 0
+                maximum: 7
+                minimum: 0
+                type: integer
             required:
             - interfaces
-            - mode
-            - name
-            - namespace
             type: object
           status:
             description: StsConfigStatus defines the observed state of StsConfig
+            properties:
+              nodeStatus:
+                items:
+                  properties:
+                    gpsStatus:
+                      properties:
+                        status:
+                          type: string
+                      required:
+                      - status
+                      type: object
+                    name:
+                      type: string
+                    tsyncStatus:
+                      properties:
+                        mode:
+                          type: string
+                        status:
+                          type: string
+                      required:
+                      - mode
+                      - status
+                      type: object
+                  required:
+                  - name
+                  - tsyncStatus
+                  type: object
+                type: array
+              state:
+                type: string
+            required:
+            - nodeStatus
+            - state
             type: object
         type: object
     served: true
