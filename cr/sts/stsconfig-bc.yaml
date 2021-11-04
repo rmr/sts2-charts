@@ -8,7 +8,7 @@ spec:
   imageRegistry: quay.io/silicom
   nodeSelector:
     mode.sts.silicom.com/bc-1: "true"
-  mode: BoundaryClock
+  mode: T-TBC.8275.1
   interfaces:
     - ethName: enp2s0f0
       synce: 1
@@ -19,9 +19,9 @@ spec:
       synce: 1
       holdoff: 500
       ethPort: 1
-      mode: GrandMaster
+      mode: Master
     - ethName: enp2s0f2
       synce: 1
       holdoff: 500
       ethPort: 2
-      mode: GrandMaster
+      mode: Master

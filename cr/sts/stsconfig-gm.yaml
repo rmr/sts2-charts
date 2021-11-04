@@ -9,15 +9,15 @@ spec:
   nodeSelector:
     mode.sts.silicom.com/gm-1: "true"
   stsVersion: 2.0.0.0
-  mode: GrandMaster
+  mode: T-TGM.8275.1
   interfaces:
     - ethName: enp2s0f0
       synce: 1
       holdoff: 500
-      mode: GrandMaster
+      mode: Master
       ethPort: 0
     - ethName: enp2s0f1
       synce: 1
       holdoff: 500
-      mode: GrandMaster
+      mode: Master
       ethPort: 1
