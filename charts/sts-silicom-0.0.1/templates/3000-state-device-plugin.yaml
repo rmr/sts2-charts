@@ -57,10 +57,9 @@ spec:
                       minimum: 300
                       type: integer
                     mode:
-                      default: GrandMaster
+                      default: Master
                       enum:
-                      - GrandMaster
-                      - BoundaryClock
+                      - Master
                       - Slave
                       type: string
                     qlEnable:
@@ -79,11 +78,11 @@ spec:
                   type: object
                 type: array
               mode:
-                default: GrandMaster
+                default: T-GM.8275.1
                 enum:
-                - GrandMaster
-                - BoundaryClock
-                - Slave
+                - T-GM.8275.1
+                - T-BC-8275.1
+                - T-TSC.8275.1
                 type: string
               namespace:
                 default: sts-silicom
@@ -108,7 +107,7 @@ spec:
                 minimum: 1
                 type: integer
               stsVersion:
-                default: 2.0.0.1
+                default: 2.0.0.0
                 type: string
               synceCpu:
                 default: 10
@@ -136,10 +135,16 @@ spec:
                   properties:
                     gpsStatus:
                       properties:
-                        status:
+                        lat:
+                          type: integer
+                        lon:
+                          type: integer
+                        time:
                           type: string
                       required:
-                      - status
+                      - lat
+                      - lon
+                      - time
                       type: object
                     name:
                       type: string
@@ -153,16 +158,8 @@ spec:
                       - mode
                       - status
                       type: object
-                  required:
-                  - name
-                  - tsyncStatus
                   type: object
                 type: array
-              state:
-                type: string
-            required:
-            - nodeStatus
-            - state
             type: object
         type: object
     served: true
@@ -323,6 +320,11 @@ spec:
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}
       containers:
       - image: {{.Values.imageRegistry}}/sts-operator:0.0.1
+        env:
+        - name: GPS_PORT
+          value: "2947"
+        - name: TSYNC_PORT
+          value: "50051"
         imagePullPolicy: Always
         name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-ctr
         args:
