@@ -17,26 +17,27 @@ metadata:
   name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverBuild}}
   annotations:
     specialresource.openshift.io/wait: "true"
-    specialresource.openshift.io/driver-container-vendor: "usb-ff_1374_0001.present"
+    specialresource.openshift.io/driver-container-vendor: "sts-silicom"
 spec:
   resources:
     limits:
       ephemeral-storage: "10Gi"
-  source:
   runPolicy: "Serial"
   triggers:
     - type: "ConfigChange"
     - type: "ImageChange"
   source:
+    configMaps:
+      - configMap:
+          name: ice-driver
     dockerfile: |
       FROM {{.Values.driverToolkitImage}}
       MAINTAINER "rmr@silicom.dk"
 
-      ARG ICE_SRC_CURL
       ARG ICE_VERSION
 
       WORKDIR /build
-      RUN curl -sL "$ICE_SRC_CURL" -o ice.tgz
+      COPY ice.tgz .
       RUN tar xvf ice.tgz
       RUN make -C ice-$ICE_VERSION/src -j4
 

@@ -106,7 +106,7 @@ metadata:
     {{- end }}
     specialresource.openshift.io/wait: "true"
     specialresource.openshift.io/state: "driver-container"
-    specialresource.openshift.io/driver-container-vendor: "usb-ff_1374_0001.present"
+    specialresource.openshift.io/driver-container-vendor: "sts-silicom"
     specialresource.openshift.io/kernel-affine: "true"
 spec:
   updateStrategy:
@@ -126,8 +126,17 @@ spec:
     spec:
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
       serviceAccountName: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
-      nodeSelector:
-        feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d8.present: "true"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            {{- range $i, $selector := .Values.nodeSelectorTerms }}
+            - matchExpressions:
+              - key: {{$selector}}
+                operator: In
+                values:
+                - "true"
+            {{- end}}
       containers:
       - image: {{.Values.driverRegistry}}/{{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}:v{{.Values.kernelFullVersion}}
         imagePullPolicy: Always
