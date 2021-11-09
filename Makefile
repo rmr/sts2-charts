@@ -10,11 +10,14 @@ all: package
 package:
 	cd charts/sts-silicom-0.0.1 && $(HELM) package . -d $(shell pwd)
 
+ice.tgz:
+	curl -sL "https://sourceforge.net/projects/e1000/files/ice%20stable/1.6.4/ice-1.6.4.tar.gz/download" -o ice.tgz
+
 helm:
 	-rm -rf bin
 	mkdir -p bin
-	curl -sL https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz -o $(shell pwd)/bin/helm.tar.gz
-	tar xvf $(shell pwd)/bin/helm.tar.gz -C bin
+	curl -sL https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz -o bin/helm.tar.gz
+	tar xvf bin/helm.tar.gz -C bin
 	chmod +x bin/linux-amd64/helm
 
 sts-silicom-configmap: package
@@ -22,8 +25,8 @@ sts-silicom-configmap: package
 	cd charts && $(HELM) repo index cm --url=cm://sts-silicom/sts-silicom	
 
 oc-sts-silicom-configmap: sts-silicom-configmap
-	- oc delete cm sts-silicom -n sts-silicom
-	- oc create namespace sts-silicom
+	- oc delete ns sts-silicom
+	oc create ns sts-silicom
+	oc create cm ice-driver --from-file=ice.tgz -n sts-silicom
 	oc create cm sts-silicom --from-file=charts/cm/index.yaml --from-file=charts/cm/sts-silicom-0.0.1.tgz -n sts-silicom
-	- oc delete -f cr/sts-silicom-cr.yaml
-	oc apply -f cr/sts-silicom-cr.yaml
+	oc apply -f cr/sro/sts-silicom-cr.yaml

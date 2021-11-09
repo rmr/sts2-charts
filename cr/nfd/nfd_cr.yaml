@@ -50,6 +50,8 @@ spec:
                 device: ["1591"]
                 subsystem_vendor: ["1374"]
                 subsystem_device: ["02d8"]
+                subsystem_device: ["02d0"]
+                subsystem_device: ["02de"]
         - name: "ublox.usb.serial"
           matchOn:
             - usbId:

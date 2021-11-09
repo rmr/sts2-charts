@@ -1,4 +1,180 @@
 ---
+
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.1
+  creationTimestamp: null
+  name: stsconfigs.sts.silicom.com
+spec:
+  group: sts.silicom.com
+  names:
+    kind: StsConfig
+    listKind: StsConfigList
+    plural: stsconfigs
+    singular: stsconfig
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: StsConfig is the Schema for the stsconfigs API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: StsConfigSpec defines the desired state of StsConfig
+            properties:
+              domainNumber:
+                default: 24
+                maximum: 48
+                minimum: 24
+                type: integer
+              imageRegistry:
+                default: quay.io/silicom
+                type: string
+              interfaces:
+                items:
+                  properties:
+                    ethName:
+                      type: string
+                    ethPort:
+                      type: integer
+                    holdoff:
+                      default: 500
+                      maximum: 1800
+                      minimum: 300
+                      type: integer
+                    mode:
+                      default: Master
+                      enum:
+                      - Master
+                      - Slave
+                      type: string
+                    qlEnable:
+                      default: 0
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    synce:
+                      default: 0
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                  required:
+                  - ethName
+                  - ethPort
+                  type: object
+                type: array
+              mode:
+                default: T-GM.8275.1
+                enum:
+                - T-GM.8275.1
+                - T-BC-8275.1
+                - T-TSC.8275.1
+                type: string
+              namespace:
+                default: sts-silicom
+                type: string
+              nodeSelector:
+                additionalProperties:
+                  type: string
+                type: object
+              phyLedsCtl:
+                default: 0
+                maximum: 1
+                minimum: 0
+                type: integer
+              src10MHz:
+                default: 1
+                maximum: 3
+                minimum: 1
+                type: integer
+              srcPPS:
+                default: 1
+                maximum: 3
+                minimum: 1
+                type: integer
+              stsVersion:
+                default: 2.0.0.0
+                type: string
+              synceCpu:
+                default: 10
+                maximum: 40
+                minimum: 1
+                type: integer
+              synceOption:
+                default: 1
+                maximum: 2
+                minimum: 1
+                type: integer
+              synceRecClkPort:
+                default: 0
+                maximum: 7
+                minimum: 0
+                type: integer
+            required:
+            - interfaces
+            type: object
+          status:
+            description: StsConfigStatus defines the observed state of StsConfig
+            properties:
+              nodeStatus:
+                items:
+                  properties:
+                    gpsStatus:
+                      properties:
+                        lat:
+                          type: integer
+                        lon:
+                          type: integer
+                        time:
+                          type: string
+                      required:
+                      - lat
+                      - lon
+                      - time
+                      type: object
+                    name:
+                      type: string
+                    tsyncStatus:
+                      properties:
+                        mode:
+                          type: string
+                        status:
+                          type: string
+                      required:
+                      - mode
+                      - status
+                      type: object
+                  type: object
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+
+---
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -13,27 +189,16 @@ metadata:
   name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}
   namespace: {{.Values.specialresource.spec.namespace}}
 rules:
-# - apiGroups:
-#   - silicom.com
-#   resources:
-#   - '*'
-#   - STSPtp
-#   verbs:
-#   - '*'
-# - apiGroups:
-#   - coordination.k8s.io
-#   resources:
-#   - leases
-#   verbs:
-#   - '*'
 - apiGroups:
-  - security.openshift.io
+  - sts.silicom.com
   resources:
-  - securitycontextconstraints
+  - '*'
   verbs:
-  - use
-  resourceNames:
-  - privileged
+  - get
+  - list
+  - watch
+  - patch
+  - update
 
 ---
 
@@ -43,24 +208,61 @@ metadata:
   name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}
 rules:
 - apiGroups:
+  - sts.silicom.com
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+  - update
+- apiGroups:
   - ""
   resources:
-  - "nodes"
+  - services
+  - nodes
+  - configmaps
+  - serviceaccounts
+  - namespaces
   verbs:
-  - "get"
-  - "list"
-  - "watch"
-  - "patch"
-  - "update"
+  - get
+  - list
+  - watch
+  - patch
+  - update
+  - create
 - apiGroups:
-  - "apps"
-  resources: 
-  - "daemonsets"
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
   verbs:
-  - "get"
-# - apiGroups: [""]
-#   resources: ["pods/eviction"]
-#   verbs: ["create"]
+  - get
+  - list
+  - watch
+  - patch
+  - update
+  - create
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+  - update
+  - create
+- apiGroups:
+  - security.openshift.io
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - privileged
 
 ---
 
@@ -95,138 +297,8 @@ subjects:
 
 ---
 
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-entrypoint-gpsd
-  namespace: {{.Values.specialresource.spec.namespace}}
-data:
-  entrypoint.sh: |
-    #!/bin/bash
-
-    # get the acm tty 
-    acm_tty=`ls /sys/class/tty/ |grep ACM |tail -n 1`
-
-    # set the line speed:
-    stty -F /dev/$acm_tty ispeed 9600
-    stty -F /dev/$acm_tty ispeed 9600
-    echo -e -n  '\xB5\x62\x06\x02\x0A\x00\x00\x00\x00\x00\xFF\xFF\xFF\xFF\xFF\x00\x0D\xD2' > /dev/$acm_tty
-
-    # run gpsd daemon
-    echo "gpsd -n -N -D 5 /dev/$acm_tty"
-    gpsd -n -N -D 5 /dev/$acm_tty &> /tmp/gpsd.log &
-
-    nc -lk 0.0.0.0 8081
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-entrypoint
-  namespace: {{.Values.specialresource.spec.namespace}}
-data:
-  entrypoint.sh: |
-    #!/bin/bash
-
-    while ! nc -z 0.0.0.0 8081; do
-        echo "Waiting for gpsd"
-        sleep 3;
-    done
-
-    cp /etc/tsyncd/tsyncd.conf /tmp/tsyncd.conf
-
-    let i=1
-    for dev in $(lspci -d 8086:1591 | cut -d " " -f 1) ; do
-        netdev=$(basename $(realpath /sys/bus/pci/devices/0000:$dev/net/*))
-
-        sed -i "s/nicStr$i = .*$/nicStr$i = $netdev/" /tmp/tsyncd.conf
-        echo "Listening on $netdev"
-        let i=$i+1
-    done
-
-    if [ -e /etc/tsyncd/UC02_STS2r2_min.mfg ]
-    then
-      /usr/bin/plltool -l /etc/tsyncd/UC02_STS2r2_min.mfg
-      /usr/bin/plltool -i
-    fi
-
-    rm -f /var/run/tsyncd.pid
-    /usr/bin/tsyncd -fp /tmp/tsyncd.conf
-
-    sleep 5
-
-    tail -f /var/log/tsyncd.log
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-conf
-  namespace: {{.Values.specialresource.spec.namespace}}
-data:
-  tsyncd.conf: |
-    profileID = 2
-    nicStr1 = ens4
-    nicStr2 = ens5
-    nicStr3 = ens6
-    nicStr4 = ens7
-    nicStr5 = ens8
-    nicStr6 = ens9
-    nicStr7 = ens10
-    nicStr8 = ens11
-    IPCServer = 1
-    domainNum = 24
-    forwardable = 0
-    twoStep = 0
-    priority2 = 128
-    srcPPS = 1
-    src10MHz = 1
-    synceRecClkPort = 0
-    syncOption = 1
-    qlEnable1 = 1
-    #qlEnable2 = 1
-    #qlEnable3 = 1
-    #qlEnable4 = 1
-    #qlEnable5 = 1
-    #qlEnable6 = 1
-    #qlEnable7 = 1
-    #qlEnable8 = 1
-    holdOff1 = 500
-    #holdOff2 = 500
-    #holdOff3 = 500
-    #holdOff4 = 500
-    #holdOff5 = 500
-    #holdOff6 = 500
-    #holdOff7 = 500
-    #holdOff8 = 500
-    synceCpu = 10
-    swTimestamp = 0
-    inbandMode = 1 
-    dumpMode = 0
-    getRawTs = 0
-    countDelay = 0
-    dataDelay = 0
-    statDelay = 0
-    aprLevel = 8
-    traceModule = 23
-    traceLevel = 8
-    tracePtpMsg = 0
-    whenWriteLog = 0
-    debugAPI = 1
-  tsyncd-run.cfg: |
-    net_id=1591
-    delay=10
-    lane_map=8
-    bcm_port_mask=0xff
-    num_ports_10G=8
-    num_ports_25G=4
-
----
-
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   labels:
     app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}
@@ -242,76 +314,22 @@ spec:
       app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}
   template:
     metadata:
-      # Mark this pod as a critical add-on; when enabled, the critical add-on scheduler
-      # reserves resources for critical add-on pods so that they can be rescheduled after
-      # a failure.  This annotation works in tandem with the toleration below.
-      annotations:
-        scheduler.alpha.kubernetes.io/critical-pod: ""
       labels:
         app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}
     spec:
-      nodeSelector:
-        feature.node.kubernetes.io/usb-ff_1374_0001.present: "true"
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}
-      hostPID: true
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
       containers:
-      - image: {{.Values.imageRepo}}/{{.Values.siltsyncImage}}
-        command: [ "/bin/entrypoint.sh" ]
+      - image: {{.Values.imageRegistry}}/sts-operator:0.0.1
+        env:
+        - name: GPS_PORT
+          value: "2947"
+        - name: TSYNC_PORT
+          value: "50051"
+        {{- range $i, $selector := .Values.nodeSelectorTerms }}
+        - name: NODE_SELECTOR{{%i}}
+          value: "{{$selector}}"
+        {{- end}}
         imagePullPolicy: Always
         name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-ctr
         args:
-        - --zap-log-level=10
-        volumeMounts:
-          - name: devfs
-            mountPath: /dev
-          - name: sysfs
-            mountPath: /sys
-          - name: tsyncd-conf
-            mountPath: /etc/tsyncd
-            readOnly: true
-          - name: entrypoint
-            mountPath: /bin/entrypoint.sh
-            subPath: entrypoint.sh
-        securityContext:
-          privileged: true
-          readOnlyRootFilesystem: false
-          seLinuxOptions:
-            level: "s0"
-      - image: {{.Values.imageRepo}}/{{.Values.siltsyncImage}}
-        command: [ "/bin/entrypoint.sh" ]
-        imagePullPolicy: Always
-        name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-gps
-        volumeMounts:
-          - name: devfs
-            mountPath: /dev
-          - name: sysfs
-            mountPath: /sys
-          - name: entrypoint-gpsd
-            mountPath: /bin/entrypoint.sh
-            subPath: entrypoint.sh
-        securityContext:
-          privileged: true
-          readOnlyRootFilesystem: false
-          seLinuxOptions:
-            level: "s0"
-      volumes:
-        - name: devfs
-          hostPath:
-            path: /dev
-        - name: sysfs
-          hostPath:
-            path: /sys
-        - name: tsyncd-conf
-          configMap:
-            defaultMode: 0700
-            name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-conf
-        - name: entrypoint
-          configMap:
-            defaultMode: 0700
-            name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-entrypoint
-        - name: entrypoint-gpsd
-          configMap:
-            defaultMode: 0700
-            name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-entrypoint-gpsd
+        - --zap-log-level={{.Values.logLevel}}

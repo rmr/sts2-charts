@@ -45,19 +45,20 @@ data:
     if $(lsmod | grep -q ^ice); then
         rmmod ice
     fi
-    if $(realpath /sys/class/net/*/device/driver 2>&1 | grep -q ice); then
-        echo "BIG PROBLEM"
-        exit 1
+
+    if $(ls /sys/class/net/*/device/driver > /dev/null 2>&1); then
+      if $(realpath /sys/class/net/*/device/driver 2>&1 | grep -q ice); then
+          echo "ICE was unable to be unloaded."
+          sleep infinity
+      fi
     fi
-    cp /root/ice.* /data
-    cp /ice.* /data
+
     mkdir -p /lib/firmware/intel/ice/ddp
     cp /root/ice.pkg /lib/firmware/intel/ice/ddp/
-
     insmod /ice.ko
 
     if ! $(dmesg | grep -q "PTP init successful"); then
-        echo "PTP BIG PROBLEM"
+        echo "PTP Init was unsuccessful"
         exit 1
     fi
 
@@ -67,7 +68,7 @@ data:
     fi
 
     if ! $(realpath /sys/class/net/*/device/driver 2>&1 | grep -q ice); then
-        echo "THE OTHER BIG PROBLEM"
+        echo "The ICE driver was not loaded"
         exit 1
     fi
 
@@ -105,7 +106,7 @@ metadata:
     {{- end }}
     specialresource.openshift.io/wait: "true"
     specialresource.openshift.io/state: "driver-container"
-    specialresource.openshift.io/driver-container-vendor: "usb-ff_1374_0001.present"
+    specialresource.openshift.io/driver-container-vendor: "sts-silicom"
     specialresource.openshift.io/kernel-affine: "true"
 spec:
   updateStrategy:
@@ -125,8 +126,17 @@ spec:
     spec:
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
       serviceAccountName: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
-      nodeSelector:
-        feature.node.kubernetes.io/usb-ff_1374_0001.present: "true"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            {{- range $i, $selector := .Values.nodeSelectorTerms }}
+            - matchExpressions:
+              - key: {{$selector}}
+                operator: In
+                values:
+                - "true"
+            {{- end}}
       containers:
       - image: {{.Values.driverRegistry}}/{{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}:v{{.Values.kernelFullVersion}}
         imagePullPolicy: Always
@@ -137,11 +147,8 @@ spec:
         volumeMounts:
           - name: devfs
             mountPath: /dev
-          - name: sysfs
-            mountPath: /sys
           - name: entrypoint
             mountPath: /bin/entrypoint.sh
-            readOnly: true
             subPath: entrypoint.sh
           - name: modules
             mountPath: /lib/modules
@@ -150,9 +157,6 @@ spec:
         - name: devfs
           hostPath:
             path: /dev
-        - name: sysfs
-          hostPath:
-            path: /sys
         - name: modules
           hostPath:
             path: /lib/modules
@@ -160,4 +164,3 @@ spec:
           configMap:
             defaultMode: 0700
             name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}-entrypoint
----
