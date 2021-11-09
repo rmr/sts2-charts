@@ -6,6 +6,7 @@ metadata:
 spec:
   namespace: sts-silicom
   imageRegistry: quay.io/silicom
+  stsVersion: 2.0.0.0
   nodeSelector:
     mode.sts.silicom.com/bc-1: "true"
   mode: T-TBC.8275.1
