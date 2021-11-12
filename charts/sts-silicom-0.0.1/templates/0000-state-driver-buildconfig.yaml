@@ -19,6 +19,8 @@ metadata:
     specialresource.openshift.io/wait: "true"
     specialresource.openshift.io/driver-container-vendor: "sts-silicom"
 spec:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
   resources:
     limits:
       ephemeral-storage: "10Gi"
