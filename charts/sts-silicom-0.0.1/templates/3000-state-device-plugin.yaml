@@ -326,7 +326,7 @@ spec:
         - name: TSYNC_PORT
           value: "50051"
         {{- range $i, $selector := .Values.nodeSelectorTerms }}
-        - name: NODE_SELECTOR{{%i}}
+        - name: NODE_SELECTOR{{$i}}
           value: "{{$selector}}"
         {{- end}}
         imagePullPolicy: Always
