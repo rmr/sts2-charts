@@ -3,13 +3,13 @@ entries:
   sts-silicom:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-11-01T14:32:10.519286918+01:00"
+    created: "2021-11-15T15:46:05.483215932+01:00"
     description: Silicom PTP using out of tree ice drivers.
-    digest: 3e284a456d2e6ab7abbb08645aa6a8e371c6417f776e913d6fdc864bd3342718
+    digest: a44d16dae95c652568387a46512036ab3c4f6ef54a49fa74f5013bb75494cfdd
     icon: https://avatars.githubusercontent.com/u/55542927
     name: sts-silicom
     type: application
     urls:
     - cm://sts-silicom/sts-silicom/sts-silicom-0.0.1.tgz
     version: 0.0.1
-generated: "2021-11-01T14:32:10.518569358+01:00"
+generated: "2021-11-15T15:46:05.482128471+01:00"
