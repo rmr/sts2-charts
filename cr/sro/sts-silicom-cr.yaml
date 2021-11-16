@@ -29,5 +29,5 @@ spec:
     - name: ICE_VERSION
       value: 1.6.4
     - name: BUILD_BASE
-      value: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:bb5c296b4a6125f475906f457cdf2ffd35d3d70d333073a7735c2dfb29225d6d
+      value: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:15c5a46b43b973b6ca29226cff68c0cee40d151d6b887432e708248deeed895c
     # oc adm release info 4.8.6 --image-for=driver-toolkit
