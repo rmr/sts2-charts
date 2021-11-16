@@ -3,11 +3,11 @@ apiVersion: nfd.openshift.io/v1
 kind: NodeFeatureDiscovery
 metadata:
   name: nfd-instance
-  namespace: openshift-nfd
+  namespace: sro
 spec:
   instance: "" # instance is empty by default
   operand:
-    namespace: openshift-nfd
+    namespace: sro
     image: quay.io/openshift/origin-node-feature-discovery:4.8
     imagePullPolicy: Always
   workerConfig:
