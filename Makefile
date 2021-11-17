@@ -25,6 +25,7 @@ sts-silicom-configmap: package
 	cd charts && $(HELM) repo index cm --url=cm://sts-silicom/sts-silicom	
 
 oc-sts-silicom-configmap: sts-silicom-configmap ice.tgz
+	oc get nodes -l feature.node.kubernetes.io/custom-silicom.sts.devices=true
 	- oc delete ns sts-silicom
 	oc create ns sts-silicom
 	oc create cm ice-driver --from-file=ice.tgz -n sts-silicom
