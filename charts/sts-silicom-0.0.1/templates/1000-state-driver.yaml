@@ -107,7 +107,6 @@ metadata:
     specialresource.openshift.io/wait: "true"
     specialresource.openshift.io/state: "driver-container"
     specialresource.openshift.io/driver-container-vendor: "sts-silicom"
-    specialresource.openshift.io/kernel-affine: "true"
 spec:
   updateStrategy:
     type: OnDelete

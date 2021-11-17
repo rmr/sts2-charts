@@ -21,7 +21,7 @@ metadata:
     specialresource.openshift.io/kernel-affine: "true"
 spec:
   nodeSelector:
-    node-role.kubernetes.io/worker: ""
+    feature.node.kubernetes.io/custom-silicom.sts.devices: "true"
   resources:
     limits:
       ephemeral-storage: "10Gi"
