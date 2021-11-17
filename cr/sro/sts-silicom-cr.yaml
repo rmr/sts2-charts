@@ -5,7 +5,9 @@ metadata:
   namespace: sro
 spec:
   namespace: sts-silicom
-  # debug: true
+  nodeSelector:
+    feature.node.kubernetes.io/custom-silicom.sts.devices: "true"
+  debug: true
   chart:
     name: sts-silicom
     version: 0.0.1

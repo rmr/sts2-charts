@@ -34,18 +34,6 @@ spec:
           - "vendor"
           - "device"
         custom:
-        - name: "silicom.fpga.devices"
-          matchOn:
-            - pciId :
-                vendor: ["1c2c"]
-                device: ["1000"]
-            - pciId :
-                vendor: ["1c2c"]
-                device: ["1001"]
-            - pciId :
-                vendor: ["1c2c"]
-                device: ["1002"]
-
         - name: "silicom.sts.devices"
           matchOn:
             - usbId:

@@ -34,7 +34,7 @@ spec:
       - configMap:
           name: ice-driver
     dockerfile: |
-      ARG BUILD_BASE
+      ARG BUILD_BASE={{.Values.driverToolkitImage}}
       FROM $BUILD_BASE
       MAINTAINER "rmr@silicom.dk"
 
