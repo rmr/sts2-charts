@@ -381,10 +381,6 @@ spec:
           value: "2947"
         - name: TSYNC_PORT
           value: "50051"
-        {{- range $i, $selector := .Values.nodeSelectorTerms }}
-        - name: NODE_SELECTOR{{%i}}
-          value: "{{$selector}}"
-        {{- end}}
         imagePullPolicy: Always
         name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.devicePlugin}}-ctr
         args:

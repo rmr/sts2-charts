@@ -24,7 +24,7 @@ sts-silicom-configmap: package
 	mv sts-silicom-0.0.1.tgz charts/cm/
 	cd charts && $(HELM) repo index cm --url=cm://sts-silicom/sts-silicom	
 
-oc-sts-silicom-configmap: sts-silicom-configmap
+oc-sts-silicom-configmap: sts-silicom-configmap ice.tgz
 	- oc delete ns sts-silicom
 	oc create ns sts-silicom
 	oc create cm ice-driver --from-file=ice.tgz -n sts-silicom

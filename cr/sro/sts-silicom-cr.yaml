@@ -19,10 +19,6 @@ spec:
     operatorImage: sts-operator:0.0.1
     driverRegistry: image-registry.openshift-image-registry.svc:5000/sts-silicom
     logLevel: 10
-    nodeSelectorTerms:
-      - feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d0.present
-      - feature.node.kubernetes.io/pci-0200_8086_1591_1374_02de.present
-      - feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d8.present
     runArgs:
       platform: openshift-container-platform
     buildArgs:

@@ -125,17 +125,8 @@ spec:
     spec:
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
       serviceAccountName: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            {{- range $i, $selector := .Values.nodeSelectorTerms }}
-            - matchExpressions:
-              - key: {{$selector}}
-                operator: In
-                values:
-                - "true"
-            {{- end}}
+      nodeSelector:
+        feature.node.kubernetes.io/custom-silicom.sts.devices: "true"
       containers:
       - image: {{.Values.driverRegistry}}/{{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}:v{{.Values.kernelFullVersion}}
         imagePullPolicy: Always

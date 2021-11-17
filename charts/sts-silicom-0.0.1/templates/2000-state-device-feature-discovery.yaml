@@ -105,17 +105,8 @@ spec:
       labels:
         app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            {{- range $i, $selector := .Values.nodeSelectorTerms }}
-            - matchExpressions:
-              - key: {{$selector}}
-                operator: In
-                values:
-                - "true"
-            {{- end}}
+      nodeSelector:
+        feature.node.kubernetes.io/custom-silicom.sts.devices: "true"
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.deviceFeatureDiscovery}}
       hostNetwork: true
       containers:
