@@ -17,10 +17,6 @@ if $(oc get ns -A | grep -q $ns) ; then
     oc delete ns $ns
 fi
 
-if $(oc get ns -A | grep -q driver-container-base) ; then
-    oc delete ns driver-container-base
-fi
-
 if $(oc get nodes | grep -q worker2); then
     for label in $(oc describe nodes worker2 | grep specialresource.openshift.io); do
         oc label nodes worker2 "$(echo $label | cut -d '=' -f 1)-"
@@ -55,7 +51,7 @@ operator-sdk run bundle quay.io/silicom/special-resource-operator-bundle:4.9.0 -
 
 sleep 15
 
-oc apply -f $base/cr/nfd/nfd_cr.yaml
+oc apply -f $base/../../cr/nfd/nfd_cr.yaml
 
 make -C $base/../.. oc-sts-silicom-configmap
 
