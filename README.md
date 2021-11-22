@@ -20,7 +20,7 @@ This CR will configure NFD to label the nodes with the STS1, STS2, STS3
 
 Within the cr/sro directory, there is a file `setup.sh`. This is used to create and tear down the SRO for 4.9.
 
-`./cr/sro/setup.sh`
+`make sro-setup`
 
 #### STS discover daemon
 After the SRO has build and deployed the drivercontainer, the sts-discovery daemonset will be deployed to the nodes with the card, and label the nodes accordingly. Use labels to add the correct field values to the StsConfig CR (example: cr/sts/stsconfig-gm.yaml)
@@ -48,7 +48,7 @@ iface.sts.silicom.com/enp2s0f7=down
         `make package`
 
     * Deploy the helm package to the cluster using oc.
-        `make oc-sts-silicom-configmap`
+        `make sro-driver`
 
 ## STSConfig CRDS
 
