@@ -6,9 +6,9 @@ metadata:
 spec:
   namespace: sts-silicom
   imageRegistry: quay.io/silicom
-  stsVersion: 2.0.0.0
+  stsVersion: 2.0.1.0
   nodeSelector:
-    mode.sts.silicom.com/bc-1: "true"
+    sts.silicom.com/config: "bc-1"
   mode: T-TBC.8275.1
   interfaces:
     - ethName: enp2s0f0

@@ -7,19 +7,20 @@ bin=$base/bin
 PATH=$PATH:$bin
 WEB_PORT=8080
 sro_ns="sro"
-ns="sts-silicom"
+operator_ns="sts-silicom-sro"
+sts_node="worker2"
 
 if $(oc get ns -A | grep -q $sro_ns) ; then
     oc delete ns $sro_ns
 fi
 
-if $(oc get ns -A | grep -q $ns) ; then
-    oc delete ns $ns
+if $(oc get ns -A | grep -q $operator_ns) ; then
+    oc delete ns $operator_ns
 fi
 
-if $(oc get nodes | grep -q worker2); then
-    for label in $(oc describe nodes worker2 | grep specialresource.openshift.io); do
-        oc label nodes worker2 "$(echo $label | cut -d '=' -f 1)-"
+if $(oc get nodes | grep -q $sts_node); then
+    for label in $(oc describe nodes $sts_node | grep specialresource.openshift.io); do
+        oc label nodes $sts_node "$(echo $label | cut -d '=' -f 1)-"
     done
 fi
 
@@ -53,7 +54,7 @@ sleep 15
 
 oc apply -f $base/../../cr/nfd/nfd_cr.yaml
 
-make -C $base/../.. oc-sts-silicom-configmap
+make -C $base/../.. driver-sro
 
 oc delete pod --field-selector=status.phase==Succeeded --all-namespaces
 oc delete pod --field-selector=status.phase==Failed --all-namespaces

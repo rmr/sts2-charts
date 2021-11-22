@@ -1,9 +1,12 @@
 
 # https://deploy-preview-35687--osdocs.netlify.app/openshift-enterprise/latest/hardware_enablement/psap-special-resource-operator.html#using-the-special-resource-operator
 
-HELM = $(shell pwd)/bin/linux-amd64/helm
+HELM 				?= $(shell pwd)/bin/linux-amd64/helm
+SRO_NAMEPSACE		?= sts-silicom-sro
+OPERATOR_NAMEPSACE	?= sts-silicom
+STS_NODE			?= worker2
 
-.PHONY: package helm ns bundle
+.PHONY: package helm ns clean helm-chart sro-driver
 
 all: package
 
@@ -20,7 +23,7 @@ helm:
 	tar xvf bin/helm.tar.gz -C bin
 	chmod +x bin/linux-amd64/helm
 
-sts-silicom-configmap: package
+helm-chart: package
 	mv sts-silicom-0.0.1.tgz charts/cm/
 	cd charts && $(HELM) repo index cm --url=cm://sts-silicom/sts-silicom	
 
@@ -30,18 +33,26 @@ clean:
 	-oc label nodes specialresource.openshift.io/state-sts-silicom-2000- --all
 	-oc label nodes specialresource.openshift.io/state-sts-silicom-3000- --all
 
-ns:
-	- oc delete ns sts-silicom
-	oc create ns sts-silicom
+sro-ns:
+	- oc delete ns $(SRO_NAMEPSACE)
+	oc create ns $(SRO_NAMEPSACE)
 
-bundle: ns
-	operator-sdk run bundle  quay.io/silicom/sts-operator-bundle:v0.0.1 --timeout 600s --verbose -n sts-silicom
+operator-ns:
+	- oc delete ns $(OPERATOR_NAMEPSACE)
+	oc create ns $(OPERATOR_NAMEPSACE)
+
+operator-bundle: operator-ns
+	operator-sdk run bundle  quay.io/silicom/sts-operator-bundle:v0.0.1 --timeout 600s --verbose -n $(OPERATOR_NAMEPSACE)
 	oc apply -f cr/sts/stsconfig-gm.yaml
-	oc label nodes worker2 mode.sts.silicom.com/gm-1="true" --overwrite
+	oc label nodes $(STS_NODE) sts.silicom.com/config="gm-1" --overwrite
 
-oc-sts-silicom-configmap: clean sts-silicom-configmap ice.tgz ns
-	oc delete specialresources.sro.openshift.io sts-silicom
+
+sro-driver: clean helm-chart ice.tgz sro-ns
+	-oc delete specialresources.sro.openshift.io $(SRO_NAMEPSACE)
 	oc get nodes -l feature.node.kubernetes.io/custom-silicom.sts.devices=true
-	oc create cm ice-driver --from-file=ice.tgz -n sts-silicom
-	oc create cm sts-silicom --from-file=charts/cm/index.yaml --from-file=charts/cm/sts-silicom-0.0.1.tgz -n sts-silicom
+	oc create cm ice-driver --from-file=ice.tgz -n $(SRO_NAMEPSACE)
+	oc create cm sts-silicom --from-file=charts/cm/index.yaml --from-file=charts/cm/sts-silicom-0.0.1.tgz -n $(SRO_NAMEPSACE)
 	oc apply -f cr/sro/sts-silicom-cr.yaml
+
+sro-setup:
+	./cr/sro/setup.sh

@@ -4,7 +4,7 @@ metadata:
   name: sts-silicom
   namespace: sro
 spec:
-  namespace: sts-silicom
+  namespace: sts-silicom-sro
   nodeSelector:
     feature.node.kubernetes.io/custom-silicom.sts.devices: "true"
   debug: true
@@ -17,10 +17,7 @@ spec:
   set:
     kind: Values
     apiVersion: sro.openshift.io/v1beta1
-    imageRegistry: quay.io/silicom
-    operatorImage: sts-operator:0.0.1
     driverRegistry: image-registry.openshift-image-registry.svc:5000/sts-silicom
-    logLevel: 10
     runArgs:
       platform: openshift-container-platform
     buildArgs:
