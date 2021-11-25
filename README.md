@@ -17,6 +17,12 @@ Create and tear down the SRO for 4.9.
 
 `make sro-bundle`
 
+### ICE special resource
+
+Start the build and driver container charts.
+
+`make ice-special-resource`
+
 ### STS Operator bundle
 
 Create and tear down the sts bundle operator.
