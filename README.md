@@ -2,7 +2,7 @@
 
 This is a repository of the helm charts needed to use the newer ICE out of tree driver source in the Openshift cluster environment.
 
-`feature.node.kubernetes.io/custom-intel.e810-c.devices=true`
+`feature.node.kubernetes.io/custom-intel.e810_c.devices=true`
 
 ## Notes
     * Installed to namespace.
