@@ -62,7 +62,7 @@ data:
         exit 1
     fi
 
-    if ! $(ls /dev/ttyACM* | grep -q "ttyACM"); then
+    if ! $(ls /sys/class/tty/ | grep -q ACM); then
         echo "CDC_ACM driver not loaded, trying."
         modprobe cdc_acm
     fi
