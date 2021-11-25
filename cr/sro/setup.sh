@@ -48,6 +48,8 @@ oc rollout restart deploy -n openshift-image-registry
 
 sleep 2
 
+# oc create ns operators
+# oc create -f sro-operatorhub.yaml
 operator-sdk run bundle quay.io/silicom/special-resource-operator-bundle:4.9.0 --timeout 600s --verbose -n $sro_ns
 
 sleep 15

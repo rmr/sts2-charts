@@ -1,40 +1,28 @@
-# Silicom STS1,STS2,STS3 PTP PCI card SRO usage
+# ICE driver for the E810-C
 
-This is a repository of the helm charts needed to use the STS2 card from Silicom in the Openshift cluster environment.
+This is a repository of the helm charts needed to use the newer ICE out of tree driver source in the Openshift cluster environment.
+
+`feature.node.kubernetes.io/custom-intel.e810-c.devices=true`
 
 ## Notes
-    * Installed to sts-silicom namespace.
+    * Installed to namespace.
+    * Deploy sts-silicom-operator bundle
     * Special Resource Operator version 4.9 is used.
 
 ## Prerequisites
 
-### NFD configuration
-This CR will configure NFD to label the nodes with the STS1, STS2, STS3
-- feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d0.present
-- feature.node.kubernetes.io/pci-0200_8086_1591_1374_02de.present
-- feature.node.kubernetes.io/pci-0200_8086_1591_1374_02d8.present
-
-`oc apply -f cr/nfd/nfd_cr.yaml`
-
 ### SRO
 
-Within the cr/sro directory, there is a file `setup.sh`. This is used to create and tear down the SRO for 4.9.
+Create and tear down the SRO for 4.9.
 
-`make sro-setup`
+`make sro-bundle`
 
-#### STS discover daemon
-After the SRO has build and deployed the drivercontainer, the sts-discovery daemonset will be deployed to the nodes with the card, and label the nodes accordingly. Use labels to add the correct field values to the StsConfig CR (example: cr/sts/stsconfig-gm.yaml)
+### STS Operator bundle
 
-`
-iface.sts.silicom.com/enp2s0f0=down
-iface.sts.silicom.com/enp2s0f1=down
-iface.sts.silicom.com/enp2s0f2=down
-iface.sts.silicom.com/enp2s0f3=down
-iface.sts.silicom.com/enp2s0f4=down
-iface.sts.silicom.com/enp2s0f5=down
-iface.sts.silicom.com/enp2s0f6=down
-iface.sts.silicom.com/enp2s0f7=down
-`
+Create and tear down the sts bundle operator.
+
+`make operator-bundle`
+
 
 ## Usage
 
@@ -47,8 +35,11 @@ iface.sts.silicom.com/enp2s0f7=down
     * Create the sts2 helm package only
         `make package`
 
+    * Deploy the SRO bundle and the NFD configuration
+        `make sro-bundle`
+
     * Deploy the helm package to the cluster using oc.
-        `make sro-driver`
+        `make ice-special-resource`
 
 ## STSConfig CRDS
 

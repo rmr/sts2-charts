@@ -106,7 +106,7 @@ metadata:
     {{- end }}
     specialresource.openshift.io/wait: "true"
     specialresource.openshift.io/state: "driver-container"
-    specialresource.openshift.io/driver-container-vendor: "sts-silicom"
+    specialresource.openshift.io/driver-container-vendor: "ice-special-resource"
     specialresource.openshift.io/kernel-affine: "true"
 spec:
   updateStrategy:
@@ -127,7 +127,7 @@ spec:
       serviceAccount: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
       serviceAccountName: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
       nodeSelector:
-        feature.node.kubernetes.io/custom-silicom.sts.devices: "true"
+        feature.node.kubernetes.io/custom-intel.e810_c.devices: "true"
       containers:
       - image: {{.Values.driverRegistry}}/{{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}:v{{.Values.kernelFullVersion}}
         imagePullPolicy: Always

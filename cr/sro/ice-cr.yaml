@@ -1,23 +1,23 @@
 apiVersion: sro.openshift.io/v1beta1
 kind: SpecialResource
 metadata:
-  name: sts-silicom
+  name: ice-special-resource
   namespace: sro
 spec:
-  namespace: sts-silicom-sro
+  namespace: sro
   nodeSelector:
-    feature.node.kubernetes.io/custom-silicom.sts.devices: "true"
+    feature.node.kubernetes.io/custom-intel.e810_c.devices: "true"
   debug: true
   chart:
-    name: sts-silicom
+    name: ice-special-resource
     version: 0.0.1
     repository:
-      name: sts-silicom
-      url: cm://sts-silicom/sts-silicom
+      name: ice-special-resource
+      url: cm://sro/ice-special-resource
   set:
     kind: Values
     apiVersion: sro.openshift.io/v1beta1
-    driverRegistry: image-registry.openshift-image-registry.svc:5000/sts-silicom
+    driverRegistry: image-registry.openshift-image-registry.svc:5000/sro
     runArgs:
       platform: openshift-container-platform
     buildArgs:

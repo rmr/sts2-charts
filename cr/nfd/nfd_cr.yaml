@@ -46,6 +46,11 @@ spec:
                 subsystem_device: ["02d8"]
                 subsystem_device: ["02d0"]
                 subsystem_device: ["02de"]
+        - name: "intel.e810_c.devices"
+          matchOn:
+            - pciId :
+                vendor: ["8086"]
+                device: ["1591"]
         - name: "ublox.usb.serial"
           matchOn:
             - usbId:

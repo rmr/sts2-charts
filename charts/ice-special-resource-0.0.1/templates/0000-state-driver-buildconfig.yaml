@@ -17,11 +17,11 @@ metadata:
   name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverBuild}}
   annotations:
     specialresource.openshift.io/wait: "true"
-    specialresource.openshift.io/driver-container-vendor: "sts-silicom"
+    specialresource.openshift.io/driver-container-vendor: "ice-special-resource"
     specialresource.openshift.io/kernel-affine: "true"
 spec:
   nodeSelector:
-    feature.node.kubernetes.io/custom-silicom.sts.devices: "true"
+    feature.node.kubernetes.io/custom-intel.e810_c.devices: "true"
   resources:
     limits:
       ephemeral-storage: "10Gi"
@@ -32,7 +32,7 @@ spec:
   source:
     configMaps:
       - configMap:
-          name: ice-driver
+          name: ice-special-resource-src
     dockerfile: |
       ARG BUILD_BASE
       FROM $BUILD_BASE
