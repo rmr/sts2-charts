@@ -1,6 +1,6 @@
-# ICE driver for the E810-C
+# Silicom STS1,STS2,STS3 PTP PCI card SRO usage
 
-This is a repository of the helm charts needed to use the newer ICE out of tree driver source in the Openshift cluster environment.
+This is a repository of the helm charts needed to use the STS2 card from Silicom in the Openshift cluster environment and of the helm charts needed to use the newer ICE (E810-C) out of tree driver source in the Openshift cluster environment.
 
 `feature.node.kubernetes.io/custom-intel.e810_c.devices=true`
 
