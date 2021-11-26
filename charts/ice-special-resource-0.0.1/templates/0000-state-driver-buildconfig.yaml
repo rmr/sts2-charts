@@ -38,17 +38,21 @@ spec:
       FROM $BUILD_BASE
       MAINTAINER "rmr@silicom.dk"
 
+      {{- if eq .Values.runArgs.buildIce "true" }}
       ARG ICE_VERSION
       WORKDIR /build
       COPY ice.tgz .
       RUN tar xvf ice.tgz
       RUN make -C ice-$ICE_VERSION/src -j4
+      {{- end }}
 
       FROM registry.access.redhat.com/ubi8/ubi-minimal
-      ARG ICE_VERSION
       RUN microdnf install pciutils kmod procps iproute nc util-linux
+      {{- if eq .Values.runArgs.buildIce "true" }}
+      ARG ICE_VERSION
       COPY --from=0 /build/ice-$ICE_VERSION/src/ice.ko /
       COPY --from=0 /build/ice-$ICE_VERSION/ddp/*.pkg /root/ice.pkg
+      {{- end }}
   strategy:
     dockerStrategy:
       buildArgs:

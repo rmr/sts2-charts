@@ -20,6 +20,7 @@ spec:
     driverRegistry: image-registry.openshift-image-registry.svc:5000/sro
     runArgs:
       platform: openshift-container-platform
+      buildIce: "true"
     buildArgs:
     - name: ICE_VERSION
       value: 1.6.4
