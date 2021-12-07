@@ -6,7 +6,7 @@ SRO_NS			?= sro
 OPERATOR_NS		?= sts-silicom
 STS_NODE		?= worker2
 SPECIAL_RESOURCE = ice-special-resource
-ICE_VERION      ?= 1.6.4
+ICE_VERSION      ?= 1.6.7
 .PHONY: package helm ns clean helm-chart sro-driver
 
 all: package
@@ -15,7 +15,10 @@ package:
 	cd charts/$(SPECIAL_RESOURCE)-0.0.1 && $(HELM) package . -d $(shell pwd)
 
 ice.tgz:
-	curl -sL "https://sourceforge.net/projects/e1000/files/ice%20stable/$(ICE_VERION)/ice-$(ICE_VERION).tar.gz/download" -o ice.tgz
+	curl -sL "https://sourceforge.net/projects/e1000/files/ice%20stable/$(ICE_VERSION)/ice-$(ICE_VERSION).tar.gz/download" -o ice.tgz
+
+ice-sro:
+	docker build . --build-arg ICE_VERSION=$(ICE_VERSION) -f docker/Dockerfile -t quay.io/silicom/ice-driver-sro:$(ICE_VERSION)
 
 helm:
 	-rm -rf bin
@@ -42,8 +45,9 @@ operator-ns:
 	oc create ns $(OPERATOR_NS)
 
 operator-bundle: operator-ns
-	operator-sdk run bundle quay.io/silicom/sts-operator-bundle:v2.0.1-0 --timeout 600s --verbose -n $(OPERATOR_NS)
+	operator-sdk run bundle quay.io/silicom/sts-operator-bundle:2.0.1-0 --timeout 600s --verbose -n $(OPERATOR_NS)
 	oc label nodes $(STS_NODE) sts.silicom.com/config="gm-1" --overwrite
+	sleep 60
 	oc apply -f cr/sts/stsconfig-gm.yaml
 
 sro-bundle: sro-ns
