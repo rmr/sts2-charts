@@ -103,6 +103,7 @@ metadata:
   labels:
     app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
   name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
+  namespace: {{.Values.specialresource.spec.namespace}}
   annotations:
     {{- if eq .Values.runArgs.platform "openshift-container-platform" }}
     openshift.io/scc: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}

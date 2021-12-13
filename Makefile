@@ -17,20 +17,17 @@ package:
 ice.tgz:
 	curl -sL "https://sourceforge.net/projects/e1000/files/ice%20stable/$(ICE_VERSION)/ice-$(ICE_VERSION).tar.gz/download" -o ice.tgz
 
-ice-sro:
-	docker build . --build-arg ICE_VERSION=$(ICE_VERSION) -f docker/Dockerfile -t quay.io/silicom/ice-driver-sro:$(ICE_VERSION)
-
 helm:
 	-rm -rf bin
 	mkdir -p bin
-	curl -sL https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz -o bin/helm.tar.gz
+	curl -sL https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz -o bin/helm.tar.gz
 	tar xvf bin/helm.tar.gz -C bin
 	chmod +x bin/linux-amd64/helm
 
 helm-chart: package
 	-rm charts/cm/*.tgz
 	mv $(SPECIAL_RESOURCE)-0.0.1.tgz charts/cm/
-	cd charts && $(HELM) repo index cm --url=cm://$(SRO_NS)/$(SPECIAL_RESOURCE)
+	cd charts && $(HELM) repo index cm --url=http://ice-driver-src:3000/ice-special-resource/
 
 clean:
 	-oc label nodes specialresource.openshift.io/state-$(ICE_SPECIAL_RESOURCE)-0000- --all
@@ -65,3 +62,5 @@ $(SPECIAL_RESOURCE): clean helm-chart ice.tgz lose-images
 	oc create cm $(SPECIAL_RESOURCE) --from-file=charts/cm/index.yaml --from-file=charts/cm/$(SPECIAL_RESOURCE)-0.0.1.tgz -n $(SRO_NS)
 	oc apply -f cr/sro/ice-cr.yaml
 
+charts-image:
+	docker build . -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION)

@@ -1,20 +1,10 @@
----
-
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  labels:
-    app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
-  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
-
----
-
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   labels:
     app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverBuild}}
   name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverBuild}}
+  namespace: {{.Values.specialresource.spec.namespace}}
   annotations:
     specialresource.openshift.io/wait: "true"
     specialresource.openshift.io/driver-container-vendor: "ice-special-resource"
@@ -26,9 +16,7 @@ spec:
     limits:
       ephemeral-storage: "10Gi"
   runPolicy: "Serial"
-  triggers:
-    - type: "ConfigChange"
-    - type: "ImageChange"
+
   source:
     configMaps:
       - configMap:

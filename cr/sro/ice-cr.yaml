@@ -9,11 +9,11 @@ spec:
     feature.node.kubernetes.io/custom-intel.e810_c.devices: "true"
   debug: true
   chart:
-    name: ice-special-resource
+    name: ice-special-resource-chart
     version: 0.0.1
     repository:
-      name: ice-special-resource
-      url: cm://sro/ice-special-resource
+      name: ice-special-resource-chart
+      url: cm://sro/ice-special-resource-chart
   set:
     kind: Values
     apiVersion: sro.openshift.io/v1beta1
