@@ -1,0 +1,16 @@
+apiVersion: sts.silicom.com/v1alpha1
+kind: StsOperatorConfig
+metadata:
+  name: sts-operator-config
+  namespace: sts-silicom
+spec:
+  images:
+    tsyncd: quay.io/silicom/tsyncd:2.0.1.0
+    ts2Phcs: quay.io/silicom/ts2phcs:1.0.0
+    phcs2Sys: quay.io/silicom/phcs2sys:3.1.1
+    grpcTsyncd: quay.io/silicom/grpc-tsyncd:2.0.1.0
+    gpsd: quay.io/silicom/gpsd:3.23.1
+  sro:
+    namespace: sro
+  grpcSvcPort: 50051
+  gpsSvcPort: 2947

@@ -42,9 +42,10 @@ operator-ns:
 	oc create ns $(OPERATOR_NS)
 
 operator-bundle: operator-ns
-	operator-sdk run bundle quay.io/silicom/sts-operator-bundle:2.0.1-0 --timeout 600s --verbose -n $(OPERATOR_NS)
+	operator-sdk run bundle quay.io/silicom/sts-operator-bundle:0.0.1 --timeout 600s --verbose -n $(OPERATOR_NS)
 	oc label nodes $(STS_NODE) sts.silicom.com/config="gm-1" --overwrite
 	sleep 60
+	oc apply -f cr/sts/stsoperator-config.yaml
 	oc apply -f cr/sts/stsconfig-gm.yaml
 
 sro-bundle: sro-ns
