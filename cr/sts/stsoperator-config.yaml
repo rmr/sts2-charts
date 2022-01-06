@@ -12,5 +12,10 @@ spec:
     gpsd: quay.io/silicom/gpsd:3.23.1
   sro:
     namespace: sro
+    iceVersion: 1.7.16
+    image: quay.io/silicom/ice-driver-src:1.7.16
+    chart:
+      repository:
+        url: http://ice-driver-src:3000
   grpcSvcPort: 50051
   gpsSvcPort: 2947

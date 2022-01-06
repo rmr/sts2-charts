@@ -61,7 +61,10 @@ $(SPECIAL_RESOURCE): clean helm-chart ice.tgz lose-images
 	oc get nodes -l feature.node.kubernetes.io/custom-intel.e810_c.devices=true
 	oc create cm $(SPECIAL_RESOURCE)-src --from-file=ice.tgz -n $(SRO_NS)
 	oc create cm $(SPECIAL_RESOURCE) --from-file=charts/cm/index.yaml --from-file=charts/cm/$(SPECIAL_RESOURCE)-0.0.1.tgz -n $(SRO_NS)
-	oc apply -f cr/sro/ice-cr.yaml
+#	oc apply -f cr/sro/ice-cr.yaml
 
 charts-image:
-	docker build . -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION)
+	docker build . --build-arg ICE_VERSION=$(ICE_VERSION) -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION)
+
+charts-image-push:
+	docker push quay.io/silicom/ice-driver-src:$(ICE_VERSION)

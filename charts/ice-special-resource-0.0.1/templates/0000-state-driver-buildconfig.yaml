@@ -1,3 +1,11 @@
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
+  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverContainer}}
+---
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
@@ -16,27 +24,26 @@ spec:
     limits:
       ephemeral-storage: "10Gi"
   runPolicy: "Serial"
-
+  triggers:
+    - type: "ConfigChange"
+    - type: "ImageChange"
   source:
-    configMaps:
-      - configMap:
-          name: ice-special-resource-src
     dockerfile: |
       ARG BUILD_BASE
       FROM $BUILD_BASE
       MAINTAINER "rmr@silicom.dk"
 
-      {{- if eq .Values.runArgs.buildIce "true" }}
+      {{- if .Values.runArgs.buildIce }}
       ARG ICE_VERSION
       WORKDIR /build
-      COPY ice.tgz .
+      RUN curl -sL http://ice-driver-src:3000/ice.tgz -o ice.tgz
       RUN tar xvf ice.tgz
       RUN make -C ice-$ICE_VERSION/src -j4
       {{- end }}
 
       FROM registry.access.redhat.com/ubi8/ubi-minimal
       RUN microdnf install pciutils kmod procps iproute nc util-linux
-      {{- if eq .Values.runArgs.buildIce "true" }}
+      {{- if .Values.runArgs.buildIce }}
       ARG ICE_VERSION
       COPY --from=0 /build/ice-$ICE_VERSION/src/ice.ko /
       COPY --from=0 /build/ice-$ICE_VERSION/ddp/*.pkg /root/ice.pkg
@@ -51,7 +58,6 @@ spec:
         - name: BUILD_BASE
 #          value: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:aea6d1e324558e2484bb14d6ffb8455fc752628c12118e8f33c8ae0a31990e06
           value: {{.Values.driverToolkitImage}}
-
   output:
     to:
       kind: DockerImage
