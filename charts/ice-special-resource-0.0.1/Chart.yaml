@@ -1,7 +1,7 @@
 apiVersion: v2
 name: ice-special-resource
 version: "0.0.1"
-appVersion: "1.7.16"
+appVersion: "1.6.7"
 description: Network out of tree ice drivers.
 icon: https://avatars.githubusercontent.com/u/55542927
 type: application

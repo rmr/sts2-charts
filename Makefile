@@ -6,7 +6,7 @@ SRO_NS			?= sro
 OPERATOR_NS		?= sts-silicom
 STS_NODE		?= worker2
 SPECIAL_RESOURCE = ice-special-resource
-ICE_VERSION      ?= 1.7.16
+ICE_VERSION      ?= 1.6.7
 .PHONY: package helm ns clean helm-chart sro-driver
 
 all: package

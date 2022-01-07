@@ -29,24 +29,31 @@ spec:
     - type: "ImageChange"
   source:
     dockerfile: |
+      {{- if .Values.runArgs.buildIce }}
+      # STAGE 0
+      ARG ICE_SRC=quay.io/silicom/ice-driver-src:1.6.7
       ARG BUILD_BASE
+      FROM $ICE_SRC
+      RUN echo commmand
+
+      # STAGE 1
       FROM $BUILD_BASE
       MAINTAINER "rmr@silicom.dk"
-
-      {{- if .Values.runArgs.buildIce }}
       ARG ICE_VERSION
+      ARG ICE_SRC
       WORKDIR /build
-      RUN curl -sL http://ice-driver-src:3000/ice.tgz -o ice.tgz
+      COPY --from=0 /charts/ice.tgz ice.tgz
       RUN tar xvf ice.tgz
       RUN make -C ice-$ICE_VERSION/src -j4
       {{- end }}
 
+      # STAGE 2
       FROM registry.access.redhat.com/ubi8/ubi-minimal
-      RUN microdnf install pciutils kmod procps iproute nc util-linux
       {{- if .Values.runArgs.buildIce }}
+      RUN microdnf install pciutils kmod procps iproute nc util-linux
       ARG ICE_VERSION
-      COPY --from=0 /build/ice-$ICE_VERSION/src/ice.ko /
-      COPY --from=0 /build/ice-$ICE_VERSION/ddp/*.pkg /root/ice.pkg
+      COPY --from=1 /build/ice-$ICE_VERSION/src/ice.ko /
+      COPY --from=1 /build/ice-$ICE_VERSION/ddp/*.pkg /root/ice.pkg
       {{- end }}
   strategy:
     dockerStrategy:
