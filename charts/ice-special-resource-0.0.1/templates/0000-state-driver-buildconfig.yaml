@@ -31,7 +31,7 @@ spec:
     dockerfile: |
       {{- if .Values.runArgs.buildIce }}
       # STAGE 0
-      ARG ICE_SRC=quay.io/silicom/ice-driver-src:1.6.7
+      ARG ICE_SRC=quay.io/silicom/ice-driver-src:1.7.16
       ARG BUILD_BASE
       FROM $ICE_SRC
       RUN echo commmand
@@ -52,7 +52,7 @@ spec:
       {{- if .Values.runArgs.buildIce }}
       RUN microdnf install pciutils kmod procps iproute nc util-linux
       ARG ICE_VERSION
-      COPY --from=1 /build/ice-$ICE_VERSION/src/ice.ko /
+      COPY --from=1 /build/ice-$ICE_VERSION/src/*.ko /
       COPY --from=1 /build/ice-$ICE_VERSION/ddp/*.pkg /root/ice.pkg
       {{- end }}
   strategy:

@@ -47,6 +47,10 @@ data:
         rmmod ice
     fi
 
+    if $(lsmod | grep -q ^auxiliary); then
+        rmmod auxiliary
+    fi
+
     if $(ls /sys/class/net/*/device/driver > /dev/null 2>&1); then
       if $(realpath /sys/class/net/*/device/driver 2>&1 | grep -q ice); then
           echo "ICE was unable to be unloaded."
@@ -56,6 +60,8 @@ data:
 
     mkdir -p /lib/firmware/intel/ice/ddp
     cp /root/ice.pkg /lib/firmware/intel/ice/ddp/
+
+    [ -f /auxiliary.ko ] && insmod /auxiliary.ko
     insmod /ice.ko
 
     if ! $(dmesg | grep -q "PTP init successful"); then
