@@ -1,5 +1,4 @@
 FROM golang
-RUN apt update && apt install -y curl
 
 ARG ICE_VERSION="1.6.7"
 
@@ -8,12 +7,9 @@ RUN curl -sL https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz -o helm.tar.gz &
     chmod +x linux-amd64/helm && \
     mv linux-amd64/helm /usr/bin/helm
 
-RUN curl -sL "https://sourceforge.net/projects/e1000/files/ice%20stable/${ICE_VERSION}/ice-${ICE_VERSION}.tar.gz/download" -o /ice.tgz
-
 WORKDIR /
 ADD charts/ice-special-resource-0.0.1/templates charts/ice-special-resource-0.0.1/templates
 ADD charts/ice-special-resource-0.0.1/Chart.yaml charts/ice-special-resource-0.0.1/Chart.yaml
-ADD kustomization.yaml kustomization.yaml
 
 WORKDIR /charts
 RUN helm package ice-special-resource-0.0.1 -d . && \
@@ -30,6 +26,6 @@ ARG ICE_VERSION="1.6.7"
 COPY --from=0 /server /server
 COPY --from=0 /charts/ice-special-resource-0.0.1.tgz /charts/ice-special-resource-0.0.1.tgz
 COPY --from=0 /charts/index.yaml /charts/index.yaml
-COPY --from=0 /ice.tgz /charts/ice.tgz
+ADD "https://sourceforge.net/projects/e1000/files/ice%20stable/${ICE_VERSION}/ice-${ICE_VERSION}.tar.gz/download" /charts/ice.tgz
 
 ENTRYPOINT [ "/server" ]
