@@ -1,0 +1,27 @@
+apiVersion: sro.openshift.io/v1beta1
+kind: SpecialResource
+metadata:
+  name: ice-special-resource
+  namespace: sro
+spec:
+  namespace: sro
+  nodeSelector:
+    feature.node.kubernetes.io/custom-intel.e810_c.devices: "true"
+  debug: true
+  chart:
+    name: ice-special-resource
+    version: 0.0.1
+    repository:
+      name: ice-special-resource
+      url: http://ice-driver-src:3000
+  set:
+    kind: Values
+    apiVersion: sro.openshift.io/v1beta1
+    driverRegistry: image-registry.openshift-image-registry.svc:5000/sro
+    runArgs:
+      platform: openshift-container-platform
+      buildIce: "true"
+    buildArgs:
+    - name: ICE_VERSION
+      value: 1.7.16
+    # oc adm release info 4.8.6 --image-for=driver-toolkit
