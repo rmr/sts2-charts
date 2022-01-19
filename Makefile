@@ -2,7 +2,7 @@
 # https://deploy-preview-35687--osdocs.netlify.app/openshift-enterprise/latest/hardware_enablement/psap-special-resource-operator.html#using-the-special-resource-operator
 
 HELM			?= $(shell pwd)/bin/linux-amd64/helm
-SRO_NS			?= sro
+SRO_NS			?= openshift-operators
 OPERATOR_NS		?= sts-silicom
 STS_NODE		?= worker2
 SPECIAL_RESOURCE = ice-special-resource
@@ -37,19 +37,26 @@ sro-ns:
 	- oc delete ns $(SRO_NS)
 	oc create ns $(SRO_NS)
 
+operator-sdk:
+	-mkdir bin
+	curl -sL https://github.com/operator-framework/operator-sdk/releases/download/v1.16.0/operator-sdk_linux_amd64 -o bin/operator-sdk
+	chmod +x bin/operator-sdk
+
 operator-ns:
 	- oc delete ns $(OPERATOR_NS)
 	oc create ns $(OPERATOR_NS)
 
 operator-bundle: operator-ns
-	operator-sdk run bundle quay.io/silicom/sts-operator-bundle:0.0.1 --timeout 600s --verbose -n $(OPERATOR_NS)
+	-oc delete csvs silicom-sts-operator.v0.0.1
+	bin/operator-sdk run bundle quay.io/silicom/sts-operator-bundle:0.0.1 --timeout 600s --verbose -n $(OPERATOR_NS)
 	oc label nodes $(STS_NODE) sts.silicom.com/config="gm-1" --overwrite
 	sleep 60
-	oc apply -f cr/sts/stsoperator-config.yaml
-	oc apply -f cr/sts/stsconfig-gm.yaml
+#	oc apply -f cr/sts/stsoperator-config.yaml
+#	oc apply -f cr/sts/stsconfig-gm.yaml
 
 sro-bundle: sro-ns
-	operator-sdk run bundle quay.io/silicom/special-resource-operator-bundle:4.9.0 --timeout 600s --verbose -n $(SRO_NS)
+	-oc delete apiservices.apiregistration.k8s.io v1beta1.sro.openshift.io
+	bin/operator-sdk run bundle quay.io/silicom/special-resource-operator-bundle:4.9.0 --timeout 300s --verbose -n $(SRO_NS)
 
 lose-images:
 	oc rollout restart deploy -n openshift-image-registry

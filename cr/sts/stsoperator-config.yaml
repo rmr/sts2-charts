@@ -12,12 +12,15 @@ spec:
     stsPlugin: quay.io/silicom/sts-plugin:0.0.1
     gpsd: quay.io/silicom/gpsd:3.23.1
   sro:
-    namespace: sro
+    namespace: openshift-operators
     iceVersion: 1.7.16
     srcImage: quay.io/silicom/ice-driver-src:1.7.16
     srcSvcPort: 3000
     chart:
       repository:
         url: http://ice-driver-src
+        name: ice-special-resource
+      name: ice-special-resource
+      version: 0.0.1
   grpcSvcPort: 50051
   gpsSvcPort: 2947
