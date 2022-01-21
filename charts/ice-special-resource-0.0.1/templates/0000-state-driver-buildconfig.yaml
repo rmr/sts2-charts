@@ -16,7 +16,6 @@ metadata:
   annotations:
     specialresource.openshift.io/wait: "true"
     specialresource.openshift.io/driver-container-vendor: "ice-special-resource"
-    specialresource.openshift.io/kernel-affine: "true"
 spec:
   nodeSelector:
     feature.node.kubernetes.io/custom-intel.e810_c.devices: "true"
