@@ -22,10 +22,11 @@ RUN GOOS=linux GOARCH=amd64  go build -ldflags="-w -s" -o server main.go
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 
 ARG ICE_VERSION="1.6.7"
+ARG ICE_URL="1.6.7"
 
 COPY --from=0 /server /server
 COPY --from=0 /charts/ice-special-resource-0.0.1.tgz /charts/ice-special-resource-0.0.1.tgz
 COPY --from=0 /charts/index.yaml /charts/index.yaml
-ADD "https://sourceforge.net/projects/e1000/files/ice%20stable/${ICE_VERSION}/ice-${ICE_VERSION}.tar.gz/download" /charts/ice.tgz
+ADD "${ICE_URL}" /charts/ice.tgz
 
 ENTRYPOINT [ "/server" ]

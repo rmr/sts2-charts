@@ -7,6 +7,14 @@ OPERATOR_NS		?= sts-silicom
 STS_NODE		?= worker2
 SPECIAL_RESOURCE = ice-special-resource
 ICE_VERSION      ?= 1.7.16
+ICE_VERSION_UNSUPPORTED ?= 1.7.16.1
+
+ICE_STABLE      := https://sourceforge.net/projects/e1000/files/ice%20stable
+ICE_UNSUPPORTED := https://sourceforge.net/projects/e1000/files/unsupported/ice%20unsupported
+
+ICE_URL_UNSUPPORTED	?= $(ICE_UNSUPPORTED)/$(ICE_VERSION_UNSUPPORTED)/ice-$(ICE_VERSION_UNSUPPORTED).tar.gz/download
+ICE_URL_STABLE   	?= $(ICE_UNSUPPORTED)/$(ICE_VERSION)/ice-$(ICE_VERSION).tar.gz/download
+
 .PHONY: package helm ns clean helm-chart sro-driver
 
 all: package
@@ -48,7 +56,7 @@ operator-ns:
 
 operator-bundle: operator-ns
 	-oc delete csvs silicom-sts-operator.v0.0.1
-	bin/operator-sdk run bundle quay.io/silicom/sts-operator-bundle:0.0.1 --timeout 600s --verbose -n $(OPERATOR_NS)
+	bin/operator-sdk run bundle quay.io/silicom/sts-operator-bundle:0.0.1-dev --timeout 800s --verbose -n $(OPERATOR_NS)
 	oc label nodes $(STS_NODE) sts.silicom.com/config="gm-1" --overwrite
 	sleep 60
 #	oc apply -f cr/sts/stsoperator-config.yaml
@@ -56,7 +64,7 @@ operator-bundle: operator-ns
 
 sro-bundle: sro-ns
 	-oc delete apiservices.apiregistration.k8s.io v1beta1.sro.openshift.io
-	bin/operator-sdk run bundle quay.io/silicom/special-resource-operator-bundle:4.9.0 --timeout 300s --verbose -n $(SRO_NS)
+	bin/operator-sdk run bundle quay.io/silicom/special-resource-operator-bundle:4.9.0 --timeout 600s --verbose -n $(SRO_NS)
 
 lose-images:
 	oc rollout restart deploy -n openshift-image-registry
@@ -71,7 +79,13 @@ $(SPECIAL_RESOURCE): clean helm-chart ice.tgz lose-images
 #	oc apply -f cr/sro/ice-cr.yaml
 
 charts-image:
-	docker build . --build-arg ICE_VERSION=$(ICE_VERSION) -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION)
+	docker build . --build-arg ICE_URL=$(ICE_URL_STABLE) --build-arg ICE_VERSION=$(ICE_VERSION) -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION)
+
+charts-image-unsupported:
+	docker build . --build-arg ICE_URL=$(ICE_URL_UNSUPPORTED) --build-arg ICE_VERSION=$(ICE_VERSION_UNSUPPORTED) -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION_UNSUPPORTED)
 
 charts-image-push:
 	docker push quay.io/silicom/ice-driver-src:$(ICE_VERSION)
+
+charts-image-unsupported-push:
+	docker push quay.io/silicom/ice-driver-src:$(ICE_VERSION_UNSUPPORTED)

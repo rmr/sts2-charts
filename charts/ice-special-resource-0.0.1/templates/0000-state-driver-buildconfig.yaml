@@ -17,8 +17,6 @@ metadata:
     specialresource.openshift.io/wait: "true"
     specialresource.openshift.io/driver-container-vendor: "ice-special-resource"
 spec:
-  nodeSelector:
-    feature.node.kubernetes.io/custom-intel.e810_c.devices: "true"
   resources:
     limits:
       ephemeral-storage: "10Gi"
