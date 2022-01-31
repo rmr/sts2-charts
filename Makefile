@@ -4,6 +4,7 @@
 HELM			?= $(shell pwd)/bin/linux-amd64/helm
 SRO_NS			?= openshift-operators
 OPERATOR_NS		?= sts-silicom
+BUNDLE_VER		?= 0.0.2
 STS_NODE		?= worker2
 SPECIAL_RESOURCE = ice-special-resource
 ICE_VERSION      ?= 1.7.16
@@ -55,8 +56,8 @@ operator-ns:
 	oc create ns $(OPERATOR_NS)
 
 operator-bundle: operator-ns
-	-oc delete csvs silicom-sts-operator.v0.0.1
-	bin/operator-sdk run bundle quay.io/silicom/sts-operator-bundle:0.0.1-dev --timeout 800s --verbose -n $(OPERATOR_NS)
+	-oc delete csvs silicom-sts-operator.v0.0.2
+	bin/operator-sdk run bundle quay.io/silicom/sts-operator-bundle:$(BUNDLE_VER) --timeout 800s --verbose -n $(OPERATOR_NS)
 	oc label nodes $(STS_NODE) sts.silicom.com/config="gm-1" --overwrite
 	sleep 60
 #	oc apply -f cr/sts/stsoperator-config.yaml

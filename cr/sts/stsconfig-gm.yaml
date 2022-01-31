@@ -5,10 +5,8 @@ metadata:
   namespace: sts-silicom
 spec:
   namespace: sts-silicom
-  imageRegistry: quay.io/silicom
   nodeSelector:
     sts.silicom.com/config: "gm-1"
-  stsVersion: 2.0.1.1
   mode: T-GM.8275.1
   interfaces:
     - ethName: enp2s0f0

@@ -6,16 +6,16 @@ metadata:
 spec:
   namespace: sts-silicom
   images:
-    tsyncd: quay.io/silicom/tsyncd:2.0.1.1
+    tsyncd: quay.io/silicom/tsyncd:2.1.0.0
     ts2Phcs: quay.io/silicom/ts2phcs:1.0.0
     phcs2Sys: quay.io/silicom/phcs2sys:3.1.1
-    grpcTsyncd: quay.io/silicom/grpc-tsyncd:2.0.1.1
-    stsPlugin: quay.io/silicom/sts-plugin:0.0.1-dev
+    grpcTsyncd: quay.io/silicom/grpc-tsyncd:2.1.0.0
+    stsPlugin: quay.io/silicom/sts-plugin:0.0.2
     gpsd: quay.io/silicom/gpsd:3.23.1
   sro:
     namespace: openshift-operators
-    iceVersion: 1.7.16
-    srcImage: quay.io/silicom/ice-driver-src:1.7.16
+    iceVersion: 1.7.16.1
+    srcImage: quay.io/silicom/ice-driver-src:1.7.16.1
     srcSvcPort: 3000
     chart:
       repository:
