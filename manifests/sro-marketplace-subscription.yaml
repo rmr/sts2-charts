@@ -1,0 +1,25 @@
+# apiVersion: operators.coreos.com/v1
+# kind: OperatorGroup
+# metadata:
+#   name: sro-group
+#   namespace: openshift-marketplace
+# spec:
+#   targetNamespaces:
+#   - openshift-marketplace
+
+# ---
+
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+ name: sro-alpha-subscription
+ namespace: openshift-operators
+spec:
+ channel: alpha
+ name: special-resource-operator
+ source: community-operators
+ sourceNamespace: openshift-marketplace
+ installPlanApproval: Automatic
+
+# https://operator-framework.github.io/olm-book/docs/subscriptions.html
+# https://docs.openshift.com/container-platform/4.7/operators/admin/olm-managing-custom-catalogs.html

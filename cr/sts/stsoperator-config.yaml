@@ -2,9 +2,9 @@ apiVersion: sts.silicom.com/v1alpha1
 kind: StsOperatorConfig
 metadata:
   name: sts-operator-config
-  namespace: sts-silicom
+  namespace: openshift-operators
 spec:
-  namespace: sts-silicom
+  namespace: openshift-operators
   images:
     tsyncd: quay.io/silicom/tsyncd:2.1.0.0
     ts2Phcs: quay.io/silicom/ts2phcs:1.0.0
