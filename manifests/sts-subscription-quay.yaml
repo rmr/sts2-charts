@@ -1,13 +1,13 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
-  name: silicom-sts-catsrc
+  name: silicom-sts-catsrc-quay
   # If you want the catalog source to be available
  # globally to users in all namespaces, specify the
  # openshift-marketplace namespace. Otherwise,
  # you can specify a different namespace for the
  # catalog to be scoped and available only for that namespace.
-  namespace: openshift-marketplace
+  namespace: openshift-operators
 spec:
   sourceType: grpc
   image: quay.io/silicom/sts-operator-catalog:0.0.3
@@ -22,12 +22,12 @@ spec:
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
- name: silicom-sts-sub
+ name: silicom-sts-sub-quay
  namespace: openshift-operators
 spec:
  channel: alpha
  name: silicom-sts-operator
- source: silicom-sts-catsrc
+ source: silicom-sts-catsrc-quay
  sourceNamespace: openshift-operators
  installPlanApproval: Automatic
 
