@@ -10,8 +10,8 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   labels:
-    app: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverBuild}}
-  name: {{.Values.specialresource.metadata.name}}-{{.Values.groupName.driverBuild}}
+    app: ice-build-{{ template "build.name" . }}
+  name: ice-build-{{ template "build.name" . }}
   namespace: {{.Values.specialresource.spec.namespace}}
   annotations:
     specialresource.openshift.io/wait: "true"
@@ -60,7 +60,6 @@ spec:
           value: {{ $arg.value }}
         {{- end }}
         - name: BUILD_BASE
-#          value: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:aea6d1e324558e2484bb14d6ffb8455fc752628c12118e8f33c8ae0a31990e06
           value: {{.Values.driverToolkitImage}}
   output:
     to:
