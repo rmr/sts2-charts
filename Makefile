@@ -14,7 +14,7 @@ ICE_STABLE      := https://sourceforge.net/projects/e1000/files/ice%20stable
 ICE_UNSUPPORTED := https://sourceforge.net/projects/e1000/files/unsupported/ice%20unsupported
 
 ICE_URL_UNSUPPORTED	?= $(ICE_UNSUPPORTED)/$(ICE_VERSION_UNSUPPORTED)/ice-$(ICE_VERSION_UNSUPPORTED).tar.gz/download
-ICE_URL_STABLE   	?= $(ICE_UNSUPPORTED)/$(ICE_VERSION)/ice-$(ICE_VERSION).tar.gz/download
+ICE_URL_STABLE   	?= $(ICE_STABLE)/$(ICE_VERSION)/ice-$(ICE_VERSION).tar.gz/download
 
 .PHONY: package helm ns clean helm-chart sro-driver
 
