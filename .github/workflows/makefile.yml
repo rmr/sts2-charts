@@ -13,20 +13,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+      with:
+        registry: quay.io/silicom
+        username: silicom+github_sts_operator
+        password: ${{ secrets.QUAY_STS_TOKEN }}
     
     - name: Ice supported
       run: make charts-image
       
     - name: Ice unsupported
       run: make charts-image-unsupported
-
-    - name: Log into registry quay.io/silicom
-      uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
-      with:
-        registry: quay.io/silicom
-        username: silicom+github_sts_operator
-        password: ${{ secrets.QUAY_STS_TOKEN }}
-
+  
     - name: Push Ice unsupported
       run: make charts-image-unsupported-push
 
