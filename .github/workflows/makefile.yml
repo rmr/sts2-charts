@@ -16,7 +16,7 @@ jobs:
     - uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
       with:
         registry: quay.io/silicom
-        username: silicom+github_sts_operator
+        username: ${{ secrets.QUAY_STS_USER }}
         password: ${{ secrets.QUAY_STS_TOKEN }}
     
     - name: Ice supported
