@@ -1,7 +1,5 @@
 FROM golang
 
-ARG ICE_VERSION="1.6.7"
-
 RUN curl -sL https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz -o helm.tar.gz && \
     tar xvf helm.tar.gz && \
     chmod +x linux-amd64/helm && \
@@ -21,7 +19,6 @@ RUN GOOS=linux GOARCH=amd64  go build -ldflags="-w -s" -o server main.go
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 
-ARG ICE_VERSION="1.6.7"
 ARG ICE_URL="1.6.7"
 
 COPY --from=0 /server /server

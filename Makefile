@@ -3,28 +3,32 @@
 
 HELM			?= $(shell pwd)/bin/linux-amd64/helm
 SRO_NS			?= openshift-operators
-OPERATOR_NS		?= openshift-operators2
-OPERATOR_VER	?= 0.0.2
+OPERATOR_NS		?= openshift-operators
+OPERATOR_VER	?= 0.0.4
 STS_NODE		?= worker2
 SPECIAL_RESOURCE = ice-special-resource
-ICE_VERSION      ?= 1.7.16
-ICE_VERSION_UNSUPPORTED ?= 1.7.16.1
 
 ICE_STABLE      := https://sourceforge.net/projects/e1000/files/ice%20stable
 ICE_UNSUPPORTED := https://sourceforge.net/projects/e1000/files/unsupported/ice%20unsupported
 
-ICE_URL_UNSUPPORTED	?= $(ICE_UNSUPPORTED)/$(ICE_VERSION_UNSUPPORTED)/ice-$(ICE_VERSION_UNSUPPORTED).tar.gz/download
-ICE_URL_STABLE   	?= $(ICE_STABLE)/$(ICE_VERSION)/ice-$(ICE_VERSION).tar.gz/download
+ICE_URL_AUTOMATED_STABLE := $(shell curl -sL 'https://sourceforge.net/projects/e1000/rss?path=/ice%20stable' | xmllint --xpath '//item/link[contains(text(),"tar.gz")]/text()' - | sort | tail -n1)
+ICE_URL_AUTOMATED_UNSUPPORTED := $(shell curl -sL 'https://sourceforge.net/projects/e1000/rss?path=/unsupported/ice%20unsupported' | xmllint --xpath '//item/link[contains(text(),"tar.gz")]/text()' - | sort | tail -n1)
 
-.PHONY: package helm ns clean helm-chart sro-driver
+ICE_VERSION := $(shell curl -sL 'https://sourceforge.net/projects/e1000/rss?path=/ice%20stable' | xmllint --xpath '//item/link[contains(text(),"tar.gz")]/text()' - | sort | tail -n1 | sed -n 's/^.*ice-\(.*\).tar.gz\/download/\1/p')
+ICE_VERSION_UNSUPPORTED := $(shell curl -sL 'https://sourceforge.net/projects/e1000/rss?path=/unsupported/ice%20unsupported' | xmllint --xpath '//item/link[contains(text(),"tar.gz")]/text()' - | sort | tail -n1 | sed -n 's/^.*ice-\(.*\).tar.gz\/download/\1/p')
+
+.PHONY: package helm ns clean helm-chart sro-driver ice-unsupported ice-stable
 
 all: package
 
 package:
 	cd charts/$(SPECIAL_RESOURCE)-0.0.1 && $(HELM) package . -d $(shell pwd)
 
-ice.tgz:
-	curl -sL "https://sourceforge.net/projects/e1000/files/ice%20stable/$(ICE_VERSION)/ice-$(ICE_VERSION).tar.gz/download" -o ice.tgz
+ice-unsupported:
+	curl -sL "$(ICE_URL_AUTOMATED_UNSUPPORTED)" -o ice.tgz
+
+ice-stable:
+	curl -sL "$(ICE_URL_AUTOMATED_STABLE)" -o ice.tgz
 
 helm:
 	-rm -rf bin
@@ -51,14 +55,16 @@ operator-sdk:
 	curl -sL https://github.com/operator-framework/operator-sdk/releases/download/v1.16.0/operator-sdk_linux_amd64 -o bin/operator-sdk
 	chmod +x bin/operator-sdk
 
-operator-ns:
-	-oc delete ns $(OPERATOR_NS)
-	oc create ns $(OPERATOR_NS)
-	-oc get clusterrolebindings | grep silicom | awk '{print $1}' | xargs oc delete clusterroles
-	-oc get clusterroles | grep silicom | awk '{print $1}' | xargs oc delete clusterroles
+operator-bundle:
+	-bin/operator-sdk cleanup silicom-sts-operator --timeout 600s --verbose -n $(SRO_NS)
+	-oc delete subscriptions.operators.coreos.com -n openshift-operators silicom-sts-operator-v0-0-4-sub
+	-oc delete pods -n openshift-operators quay-io-silicom-sts-operator-bundle-0-0-4
+	-oc delete catalogsources.operators.coreos.com -n openshift-operators silicom-sts-operator-catalog
+	-oc delete crds stsconfigs.sts.silicom.com
+	-oc delete crds stsnodes.sts.silicom.com
+	-oc delete crds stsoperatorconfigs.sts.silicom.com
 	-oc delete csvs silicom-sts-operator.v$(OPERATOR_VER)
-
-operator-bundle: operator-ns
+	- for ns in $$(oc get csvs -A | grep silicom-sts | awk '{print $$1}'); do oc delete csv silicom-sts-operator.v$(OPERATOR_VER) -n $$ns; done
 	bin/operator-sdk run bundle quay.io/silicom/sts-operator-bundle:$(OPERATOR_VER) --timeout 800s --verbose -n $(OPERATOR_NS)
 	oc label nodes $(STS_NODE) sts.silicom.com/config="gm-1" --overwrite
 	sleep 60
@@ -81,11 +87,11 @@ $(SPECIAL_RESOURCE): clean helm-chart ice.tgz lose-images
 	oc create cm $(SPECIAL_RESOURCE) --from-file=charts/cm/index.yaml --from-file=charts/cm/$(SPECIAL_RESOURCE)-0.0.1.tgz -n $(SRO_NS)
 #	oc apply -f cr/sro/ice-cr.yaml
 
-charts-image:
+charts-image: ice-stable
 	docker build . --build-arg ICE_URL=$(ICE_URL_STABLE) --build-arg ICE_VERSION=$(ICE_VERSION) -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION)
 
-charts-image-unsupported:
-	docker build . --build-arg ICE_URL=$(ICE_URL_UNSUPPORTED) --build-arg ICE_VERSION=$(ICE_VERSION_UNSUPPORTED) -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION_UNSUPPORTED)
+charts-image-unsupported: ice-unsupported
+	docker build . --build-arg ICE_VERSION=$(ICE_VERSION_UNSUPPORTED) -f docker/Dockerfile -t quay.io/silicom/ice-driver-src:$(ICE_VERSION_UNSUPPORTED)
 
 charts-image-push:
 	docker push quay.io/silicom/ice-driver-src:$(ICE_VERSION)

@@ -27,11 +27,10 @@ spec:
   source:
     dockerfile: |
       {{- if .Values.runArgs.buildIce }}
-      # STAGE 0
       ARG ICE_SRC=quay.io/silicom/ice-driver-src:1.7.16
       ARG BUILD_BASE
+      # STAGE 0
       FROM $ICE_SRC
-      RUN echo commmand
 
       # STAGE 1
       FROM $BUILD_BASE

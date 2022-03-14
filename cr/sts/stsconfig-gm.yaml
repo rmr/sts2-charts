@@ -8,6 +8,8 @@ spec:
   nodeSelector:
     sts.silicom.com/config: "gm-1"
   mode: T-GM.8275.1
+  gnssSpec:
+    gnssClockOutEn: 1
   interfaces:
     - ethName: enp2s0f0
       synce: 1
