@@ -24,6 +24,6 @@ ARG ICE_URL="1.6.7"
 COPY --from=0 /server /server
 COPY --from=0 /charts/ice-special-resource-0.0.1.tgz /charts/ice-special-resource-0.0.1.tgz
 COPY --from=0 /charts/index.yaml /charts/index.yaml
-ADD "${ICE_URL}" /charts/ice.tgz
+ADD ice.tgz /charts/ice.tgz
 
 ENTRYPOINT [ "/server" ]
