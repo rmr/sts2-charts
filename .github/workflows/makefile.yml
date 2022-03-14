@@ -21,12 +21,13 @@ jobs:
     
     - name: Ice supported
       run: make charts-image
-      
+
+    - name: Push Ice supported
+      run: make charts-image-push
+
     - name: Ice unsupported
       run: make charts-image-unsupported
   
     - name: Push Ice unsupported
       run: make charts-image-unsupported-push
 
-    - name: Push Ice supported
-      run: make charts-image-supported-push
