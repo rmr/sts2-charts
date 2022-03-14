@@ -26,3 +26,9 @@ jobs:
         registry: quay.io/silicom
         username: silicom+github_sts_operator
         password: ${{ secrets.QUAY_STS_TOKEN }}
+
+    - name: Push Ice unsupported
+      run: make charts-image-unsupported-push
+
+    - name: Push Ice supported
+      run: make charts-image-supported-push
