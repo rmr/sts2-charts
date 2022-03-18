@@ -3,13 +3,13 @@ entries:
   ice-special-resource:
   - apiVersion: v2
     appVersion: 1.7.16
-    created: "2022-03-18T11:05:12.12662796+01:00"
+    created: "2022-03-18T11:43:51.468570139+01:00"
     description: Network out of tree ice drivers.
-    digest: 3469433539c129f5715b22d06bd2653dde9da314ebb716dfddb955b739ecff5d
+    digest: 96abd4b0dfbbbaf26cfedb6060ef4877876d1a2d4c4ffb0e7db7ef73205f6b91
     icon: https://avatars.githubusercontent.com/u/55542927
     name: ice-special-resource
     type: application
     urls:
-    - https://silicomdk.github.io/sts2-charts/ice-special-resource-0.0.1.tgz
+    - ice-special-resource-0.0.1.tgz
     version: 0.0.1
-generated: "2022-03-18T11:05:12.126079216+01:00"
+generated: "2022-03-18T11:43:51.467925923+01:00"
