@@ -1,7 +1,7 @@
 
 # https://deploy-preview-35687--osdocs.netlify.app/openshift-enterprise/latest/hardware_enablement/psap-special-resource-operator.html#using-the-special-resource-operator
 
-HELM			?= $(shell pwd)/bin/linux-amd64/helm
+HELM			?= $(shell pwd)/bin/helm
 SRO_NS			?= openshift-operators
 OPERATOR_NS		?= openshift-operators
 OPERATOR_VER	?= 0.0.4
@@ -22,7 +22,7 @@ ICE_VERSION_UNSUPPORTED := $(shell curl -sL 'https://sourceforge.net/projects/e1
 all: package
 
 package:
-	cd charts/$(SPECIAL_RESOURCE)-0.0.1 && $(HELM) package . -d $(shell pwd)
+	cd charts/$(SPECIAL_RESOURCE)-0.0.1 && $(HELM) package . -d $(shell pwd)/../
 
 ice-unsupported:
 	curl -sL "$(ICE_URL_AUTOMATED_UNSUPPORTED)" -o ice.tgz
@@ -34,13 +34,12 @@ helm:
 	-rm -rf bin
 	mkdir -p bin
 	curl -sL https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz -o bin/helm.tar.gz
-	tar xvf bin/helm.tar.gz -C bin
-	chmod +x bin/linux-amd64/helm
+	tar xvf bin/helm.tar.gz -C bin && mv bin/linux-amd64/helm bin/
+	chmod +x $(HELM)
 
-helm-chart: package
-	-rm charts/cm/*.tgz
-	mv $(SPECIAL_RESOURCE)-0.0.1.tgz charts/cm/
-	cd charts && $(HELM) repo index cm --url=http://ice-driver-src:3000/ice-special-resource/
+charts: helm-chart-k8s helm-chart-github
+helm-chart-index: package
+	$(HELM) repo index .
 
 clean:
 	-oc label nodes specialresource.openshift.io/state-$(ICE_SPECIAL_RESOURCE)-0000- --all
