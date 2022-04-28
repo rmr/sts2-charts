@@ -27,4 +27,6 @@ COPY --from=0 /charts/index.yaml /charts/index.yaml
 COPY ice.tgz /charts/ice.tgz
 COPY docker/LICENSE /licenses/
 
+USER 1000:1000
+
 ENTRYPOINT [ "/server" ]
