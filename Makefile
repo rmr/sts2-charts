@@ -4,7 +4,7 @@
 HELM			?= $(shell pwd)/bin/helm
 SRO_NS			?= openshift-operators
 OPERATOR_NS		?= openshift-operators
-OPERATOR_VER	?= 0.0.4
+OPERATOR_VER	?= 0.0.6
 STS_NODE		?= worker2
 SPECIAL_RESOURCE = ice-special-resource
 
@@ -56,8 +56,8 @@ operator-sdk:
 
 operator-bundle:
 	-bin/operator-sdk cleanup silicom-sts-operator --timeout 600s --verbose -n $(SRO_NS)
-	-oc delete subscriptions.operators.coreos.com -n openshift-operators silicom-sts-operator-v0-0-4-sub
-	-oc delete pods -n openshift-operators quay-io-silicom-sts-operator-bundle-0-0-4
+	-oc delete subscriptions.operators.coreos.com -n openshift-operators silicom-sts-operator-v$(subst $(OPERATOR_VER),.,-)-sub
+	-oc delete pods -n openshift-operators quay-io-silicom-sts-operator-bundle-$(subst $(OPERATOR_VER),.,-)
 	-oc delete catalogsources.operators.coreos.com -n openshift-operators silicom-sts-operator-catalog
 	-oc delete crds stsconfigs.sts.silicom.com
 	-oc delete crds stsnodes.sts.silicom.com

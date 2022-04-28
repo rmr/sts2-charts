@@ -25,5 +25,6 @@ COPY --from=0 /server /server
 COPY --from=0 /charts/ice-special-resource-0.0.1.tgz /charts/ice-special-resource-0.0.1.tgz
 COPY --from=0 /charts/index.yaml /charts/index.yaml
 COPY ice.tgz /charts/ice.tgz
+COPY docker/LICENSE /licenses/
 
 ENTRYPOINT [ "/server" ]
